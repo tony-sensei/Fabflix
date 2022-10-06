@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+
+    <!-- Defines a Data Source Connecting to localhost moviedbexample-->
+    <Resource name="jdbc/movieDB"
+              auth="Container"
+              driverClassName="com.mysql.cj.jdbc.Driver"
+              type="javax.sql.DataSource"
+              username="mytestuser"
+              password="CS122Bupup!"
+              url="jdbc:mysql://localhost:3306/movieDB"/>
+</Context>
