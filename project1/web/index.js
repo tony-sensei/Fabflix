@@ -15,13 +15,27 @@
  */
 function handleStarResult(resultData) {
     console.log("handleStarResult: populating movieList table from resultData");
-    console.log("printing this");
+
     // Populate the star table
-    // Find the empty table body by id "star_table_body"
+    // Find the empty table body by id "movieList_table_body"
     let movieTableBodyElement = jQuery("#movieList_table_body");
 
     // Iterate through resultData, no more than 20 entries
     for (let i = 0; i < Math.min(20, resultData.length); i++) {
+
+        // Get the genres
+        let genreString = "";
+        for (let j = 0; j < Math.min(3, resultData[i]["movie_genre"].length); j++) {
+            genreString += resultData[i]["movie_genre"][j];
+            genreString += "; ";
+        }
+
+        let starString = "";
+        for (let j = 0; j < Math.min(3, resultData[i]["movie_star"].length); j++) {
+            starString += resultData[i]["movie_star"][j];
+            starString += "; ";
+        }
+
 
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
@@ -36,6 +50,8 @@ function handleStarResult(resultData) {
         rowHTML += "<th>" + resultData[i]["movie_title"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
+        rowHTML += "<th>" + genreString + "</th>";
+        rowHTML += "<th>" + starString + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
         rowHTML += "</tr>";
 

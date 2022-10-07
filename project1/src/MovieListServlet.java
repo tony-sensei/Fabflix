@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+
 @WebServlet(name = "MovieListServlet", urlPatterns = "/api/movieList")
 public class MovieListServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -41,18 +42,19 @@ public class MovieListServlet extends HttpServlet {
             // Declare our statement
             Statement statementMovie = conn.createStatement();
 
-            // Construct a query to get the top 20 movie info and id
+            // Construct a query to get the movie info and id (with descending rate order)
             String queryMovie = "SELECT m.id, m.title, m.year, m.director, r.rating " +
                                 "FROM movies m, ratings r " +
                                 "WHERE m.id = r.movieId " +
-                                "ORDER BY r.rating DESC";
+                                "ORDER BY r.rating DESC " +
+                                "LIMIT 20";
 
             // Perform the movie query (without genre and star)
             ResultSet rsM = statementMovie.executeQuery(queryMovie);
 
             JsonArray jsonArray = new JsonArray();
 
-            // Iterate through each row of rs
+            // Iterate through each row of rsM
             while (rsM.next()) {
 
                 String movieId = rsM.getString("id");
@@ -61,6 +63,48 @@ public class MovieListServlet extends HttpServlet {
                 String movieDirector = rsM.getString("director");
                 String movieRating = rsM.getString("rating");
 
+                // Declare our statement
+                Statement statementGenre = conn.createStatement();
+
+                // Construct a query to get the genres by using id
+                String queryGenre = "SELECT DISTINCT g.name " +
+                        "FROM movies m, genres_in_movies gim, genres g " +
+                        "WHERE gim.movieId = '" + movieId + "' AND gim.genreId = g.id";
+
+                // Perform the genre query
+                ResultSet rsG = statementGenre.executeQuery(queryGenre);
+
+
+                JsonArray jsonArrayG = new JsonArray();
+                // Iterate through each row of rsG
+                while (rsG.next()) {
+                    String genreName = rsG.getString("name");
+                    jsonArrayG.add(genreName);
+                }
+                rsG.close();
+                statementGenre.close();
+
+
+                // Construct a query to get the stars by using id
+                Statement statementStar = conn.createStatement();
+
+                String queryStar = "SELECT DISTINCT s.id, s.name " +
+                        "FROM movies m, stars_in_movies sim, stars s " +
+                        "WHERE sim.movieId = '" + movieId + "' AND sim.starId = s.id";
+
+                // Perform the star query
+                ResultSet rsS = statementStar.executeQuery(queryStar);
+
+                JsonArray jsonArrayS = new JsonArray();
+                // Iterate through each row of rsS
+                while (rsS.next()) {
+                    String starName = rsS.getString("name");
+                    jsonArrayS.add(starName);
+                }
+                rsS.close();
+                statementStar.close();
+
+
                 // Create a JsonObject based on the data we retrieve from rs
 
                 JsonObject jsonObject = new JsonObject();
@@ -68,6 +112,8 @@ public class MovieListServlet extends HttpServlet {
                 jsonObject.addProperty("movie_title", movieTitle);
                 jsonObject.addProperty("movie_year", movieYear);
                 jsonObject.addProperty("movie_director", movieDirector);
+                jsonObject.add("movie_genre", jsonArrayG);
+                jsonObject.add("movie_star", jsonArrayS);
                 jsonObject.addProperty("movie_rating", movieRating);
                 jsonArray.add(jsonObject);
             }
