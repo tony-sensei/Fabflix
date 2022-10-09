@@ -96,10 +96,13 @@ public class MovieListServlet extends HttpServlet {
                 ResultSet rsS = statementStar.executeQuery(queryStar);
 
                 JsonArray jsonArrayS = new JsonArray();
+                JsonArray jsonArraySI = new JsonArray();
                 // Iterate through each row of rsS
                 while (rsS.next()) {
+                    String starId = rsS.getString("id");
                     String starName = rsS.getString("name");
                     jsonArrayS.add(starName);
+                    jsonArraySI.add(starId);
                 }
                 rsS.close();
                 statementStar.close();
@@ -114,6 +117,7 @@ public class MovieListServlet extends HttpServlet {
                 jsonObject.addProperty("movie_director", movieDirector);
                 jsonObject.add("movie_genre", jsonArrayG);
                 jsonObject.add("movie_star", jsonArrayS);
+                jsonObject.add("star_id_Array", jsonArraySI);
                 jsonObject.addProperty("movie_rating", movieRating);
                 jsonArray.add(jsonObject);
             }

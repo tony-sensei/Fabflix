@@ -15,7 +15,6 @@
  */
 function handleStarResult(resultData) {
     console.log("handleStarResult: populating movieList table from resultData");
-
     // Populate the star table
     // Find the empty table body by id "movieList_table_body"
     let movieTableBodyElement = jQuery("#movieList_table_body");
@@ -29,25 +28,30 @@ function handleStarResult(resultData) {
             genreString += resultData[i]["movie_genre"][j];
             genreString += "; ";
         }
+        genreString = genreString.slice(0, -2);
 
         let starString = "";
         for (let j = 0; j < Math.min(3, resultData[i]["movie_star"].length); j++) {
-            starString += resultData[i]["movie_star"][j];
-            starString += "; ";
+            starString += '<a href="single-star.html?id='
+                            + resultData[i]['star_id_Array'][j]
+                            + '">'
+                            + resultData[i]["movie_star"][j]
+                            + "</a>; ";
         }
+        starString = starString.slice(0, -2);
 
 
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
         rowHTML += "<tr>";
-        // rowHTML +=
-        //     "<th>" +
-        //     // Add a link to single-star.html with id passed with GET url parameter
-        //     '<a href="single-star.html?id=' + resultData[i]['star_id'] + '">'
-        //     + resultData[i]["star_name"] +     // display star_name for the link text
-        //     '</a>' +
-        //     "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_title"] + "</th>";
+        rowHTML +=
+            "<th>" +
+            // Add a link to single-movie.html with id passed with GET url parameter
+            '<a href="single-movie.html?id=' + resultData[i]['movie_id'] + '">'
+            + resultData[i]["movie_title"] +     // display movie_title for the link text
+            '</a>' +
+            "</th>";
+
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
         rowHTML += "<th>" + genreString + "</th>";

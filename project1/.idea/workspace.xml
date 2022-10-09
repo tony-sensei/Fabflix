@@ -7,13 +7,21 @@
     <list default="true" id="0839bbb8-4512-48d6-b6f7-5e6018844f5b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MovieListServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MovieListServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/web/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -44,10 +52,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/tony/Downloads/uciCourse/cs122b/Fablix/cs122b-fall-team-13/project1/web",
+    "last_opened_file_path": "/Users/tony/Downloads/uciCourse/cs122b/Fablix/cs122b-fall-team-13/project1",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
@@ -121,7 +130,11 @@
       <workItem from="1664410783444" duration="145000" />
       <workItem from="1664411261497" duration="2345000" />
       <workItem from="1664434863936" duration="3140000" />
-      <workItem from="1665095018140" duration="12817000" />
+      <workItem from="1665095018140" duration="13204000" />
+      <workItem from="1665181797781" duration="9000" />
+      <workItem from="1665181814037" duration="3000" />
+      <workItem from="1665183011373" duration="2726000" />
+      <workItem from="1665185956674" duration="16323000" />
     </task>
     <servers />
   </component>
