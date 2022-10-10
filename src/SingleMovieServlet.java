@@ -168,8 +168,6 @@ public class SingleMovieServlet extends HttpServlet {
             out.close();
         }
 
-        // Always remember to close db connection after usage. Here it's done by try-with-resources
-
     }
 
 }
