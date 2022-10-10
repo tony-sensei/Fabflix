@@ -72,7 +72,7 @@ function handleStarResult(resultData) {
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
     dataType: "json", // Setting return data type
-    method: "GET", // Setting request method
+    method: "GET", // Setting request method GET
     url: "api/movieList", // Setting request url, which is mapped by MovieListServletServlet in Stars.java
     success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
 });

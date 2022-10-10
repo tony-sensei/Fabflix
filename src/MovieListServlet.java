@@ -31,7 +31,6 @@ public class MovieListServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         response.setContentType("application/json"); // Response mime type
 
         // Output stream to STDOUT
@@ -56,7 +55,6 @@ public class MovieListServlet extends HttpServlet {
 
             // Iterate through each row of rsM
             while (rsM.next()) {
-
                 String movieId = rsM.getString("id");
                 String movieTitle = rsM.getString("title");
                 String movieYear = rsM.getString("year");
@@ -109,7 +107,6 @@ public class MovieListServlet extends HttpServlet {
 
 
                 // Create a JsonObject based on the data we retrieve from rs
-
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("movie_id", movieId);
                 jsonObject.addProperty("movie_title", movieTitle);
@@ -145,7 +142,5 @@ public class MovieListServlet extends HttpServlet {
         } finally {
             out.close();
         }
-
-
     }
 }

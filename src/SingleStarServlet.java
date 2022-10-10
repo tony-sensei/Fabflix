@@ -19,7 +19,6 @@ import java.sql.ResultSet;
 @WebServlet(name = "SingleStarServlet", urlPatterns = "/api/single-star")
 public class SingleStarServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
-
     // Create a dataSource which registered in web.xml
     private DataSource dataSource;
 
@@ -37,7 +36,7 @@ public class SingleStarServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/json"); // Response mime type
+        response.setContentType("application/json");
 
         // Retrieve parameter id from url request.
         String id = request.getParameter("id");
@@ -66,18 +65,14 @@ public class SingleStarServlet extends HttpServlet {
             // Perform the query
             ResultSet rs = statement.executeQuery();
 
+            // Create a new jsonArray
             JsonArray jsonArray = new JsonArray();
-
-
 
             // Iterate through each row of rs
             while (rs.next()) {
-
                 String starId = rs.getString("starId");
                 String starName = rs.getString("name");
                 String starDob = rs.getString("birthYear") == null ? "N/A" : rs.getString("birthYear");
-
-
 
                 // Construct a query to get the movie by using id
                 String queryMovie = "SELECT DISTINCT m.id, m.title " +
@@ -106,8 +101,6 @@ public class SingleStarServlet extends HttpServlet {
                 }
                 rsM.close();
                 statementMovie.close();
-
-
 
                 // Create a JsonObject based on the data we retrieve from rs
 
@@ -141,8 +134,6 @@ public class SingleStarServlet extends HttpServlet {
         } finally {
             out.close();
         }
-
-        // Always remember to close db connection after usage. Here it's done by try-with-resources
 
     }
 

@@ -19,7 +19,7 @@ function getParameterByName(target) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-// Above function can be used parse Parameters.
+// Above function can be used parse Parameters in both single-movie.js and single-star.js
 
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
@@ -29,12 +29,10 @@ function getParameterByName(target) {
 function handleResult(resultData) {
 
     console.log("handleResult: populating movie info from resultData");
-
+    // jQuery the movie information element
     let movieInfoElement = jQuery("#movie_info");
 
-    // append two html <p> created to the h3 body, which will refresh the page
-
-    // Get the genres
+    // Get the genres from the resultData
     let genreString = "";
     for (let i = 0; i < resultData[0]["movie_genre"].length; i++) {
         genreString += resultData[0]["movie_genre"][i];
@@ -52,15 +50,17 @@ function handleResult(resultData) {
     }
     starString = starString.slice(0, -2);
 
-
     // MODIFIED!!!
-    movieInfoElement.append("<p>Movie Title: " + resultData[0]["movie_title"] + "</p>" +
-        "<p>Release Year: " + resultData[0]["movie_year"]     + "</p>" +
-        "<p>Director: "     + resultData[0]["movie_director"] + "</p>" +
-        "<p>Genres: "       + genreString   + "</p>" +
-        "<p>Stars: "       + starString   + "</p>" +
-        "<p>Rating: "       + resultData[0]["movie_rating"]   + "</p>" );
-
+    movieInfoElement.append("<dt class=\"col-sm-3\">Movie Title" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_title"] + "</dd>" +
+        "<dt class=\"col-sm-3\">Release Year" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_year"]  + "</dd>" +
+        "<dt class=\"col-sm-3\">Director" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_director"]  + "</dd>" +
+        "<dt class=\"col-sm-3\">Genres" + "</dt>" + "<dd class=\"col-sm-9\">" + genreString  + "</dd>" +
+        "<dt class=\"col-sm-3\">Stars" + "</dt>" + "<dd class=\"col-sm-9\">" + starString + "</dd>" +
+        "<dt class=\"col-sm-3\">Rating" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_rating"]  + "</dd>" );
+        // "<p>Director: "     + resultData[0]["movie_director"] + "</p>" +
+        // "<p>Genres: "       + genreString   + "</p>" +
+        // "<p>Stars: "       + starString   + "</p>" +
+        // "<p>Rating: "       + resultData[0]["movie_rating"]   + "</p>" );
 }
 
 /**
@@ -73,7 +73,7 @@ let movieId = getParameterByName('id');
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",
-    method: "GET",
+    method: "GET", // Setting request method GET
     url: "api/single-movie?id=" + movieId, // Setting request url, which is mapped by MoviesServlet in Movies.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleMovieServlet
 });

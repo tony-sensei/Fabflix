@@ -52,13 +52,11 @@ function handleResult(resultData) {
     }
     movieString = movieString.slice(0, -2);
 
-
-
     // append two html <p> created to the h3 body, which will refresh the page
-    starInfoElement.append("<p>Star Name: " + resultData[0]["star_name"] + "</p>" +
-                           "<p>Date Of Birth: " + resultData[0]["star_dob"] + "</p>" +
-                           "<p>Movies: "       + movieString   + "</p>");
-
+    starInfoElement.append(
+        "<dt class=\"col-sm-3\">Star Name"     + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["star_name"] + "</dd>" +
+        "<dt class=\"col-sm-3\">Date Of Birth" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["star_dob"]  + "</dd>" +
+        "<dt class=\"col-sm-3\">Movies"        + "</dt>" + "<dd class=\"col-sm-9\">" + movieString                + "</dd>" );
 }
 
 /**
@@ -71,7 +69,7 @@ let starId = getParameterByName('id');
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",  // Setting return data type
-    method: "GET",// Setting request method
+    method: "GET",// Setting request method GET
     url: "api/single-star?id=" + starId, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });
