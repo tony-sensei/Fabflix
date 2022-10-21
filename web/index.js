@@ -8,23 +8,28 @@ function handleStarResult(resultData) {
     // Find the empty table body by id "movieList_table_body"
     let movieTableBodyElement = jQuery("#movieList_table_body");
 
+
     // Iterate through resultData, no more than 20 entries
     for (let i = 0; i < Math.min(20, resultData.length); i++) {
 
         // Get the genres
+        let genreArray = resultData[i]["movie_genre"].split(',');
         let genreString = "";
-        for (let j = 0; j < Math.min(3, resultData[i]["movie_genre"].length); j++) {
-            genreString += resultData[i]["movie_genre"][j];
+        for (let j = 0; j < Math.min(3, genreArray.length); j++) {
+            genreString += genreArray[j];
             genreString += "; ";
         }
         genreString = genreString.slice(0, -2);
 
+        // Get the stars
+        let starArray = resultData[i]["movie_star"].split(',');
+        let starIdArray = resultData[i]["movie_star_id"].split(',');
         let starString = "";
-        for (let j = 0; j < Math.min(3, resultData[i]["movie_star"].length); j++) {
+        for (let j = 0; j < Math.min(3, starArray.length); j++) {
             starString += '<a href="single-star.html?id='
-                            + resultData[i]['star_id_Array'][j]
+                            + starIdArray[j]
                             + '">'
-                            + resultData[i]["movie_star"][j]
+                            + starArray[j]
                             + "</a>; ";
         }
         starString = starString.slice(0, -2);
