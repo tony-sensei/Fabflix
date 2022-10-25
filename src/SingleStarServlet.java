@@ -77,7 +77,8 @@ public class SingleStarServlet extends HttpServlet {
                 // Construct a query to get the movie by using id
                 String queryMovie = "SELECT DISTINCT m.id, m.title " +
                         "FROM movies as m, stars as s, stars_in_movies as sim " +
-                        "WHERE sim.movieId = m.id and sim.starId = ?";
+                        "WHERE sim.movieId = m.id and sim.starId = ?" +
+                        "ORDER BY m.year desc, m.title asc";
 
                 // Declare the statement
                 PreparedStatement statementMovie = conn.prepareStatement(queryMovie);

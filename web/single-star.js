@@ -31,6 +31,7 @@ function handleResult(resultData) {
     let starInfoElement = jQuery("#star_info");
 
     let movieString = "";
+
     for (let i = 0; i < resultData[0]["movie_title"].length; i++) {
         movieString += '<a href="single-movie.html?id='
             + resultData[0]['movie_id_Array'][i]

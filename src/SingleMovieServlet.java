@@ -51,26 +51,16 @@ public class SingleMovieServlet extends HttpServlet {
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
-            // Get a connection from dataSource
-
-            // Construct a query with parameter represented by "?"
             String query = "SELECT sim.movieId, title, year, director, sim.starId, s.name as sname, birthYear, rating " +
                     "from stars as s, stars_in_movies as sim, movies as m, ratings as r " +
                     "where m.id = sim.movieId and sim.starId = s.id and m.id = r.movieId and m.id = ?";
 
-            // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);
-
-            // Set the parameter represented by "?" in the query to the id we get from url,
-            // num 1 indicates the first "?" in the query
             statement.setString(1, id);
-
-            // Perform the query
             ResultSet rs = statement.executeQuery();
 
             JsonArray jsonArray = new JsonArray();
 
-            // Iterate through each row of rs
             while (rs.next()) {
 
                 String movieId = rs.getString("movieId");
@@ -79,22 +69,17 @@ public class SingleMovieServlet extends HttpServlet {
                 String movieDirector = rs.getString("director");
                 String movieRating = rs.getString("rating");
 
-
                 String queryGenre = "SELECT DISTINCT name " +
                         "FROM movies as m, genres as g, genres_in_movies as gim " +
                         "WHERE gim.genreId = g.id and gim.movieId = ?";
 
-                // Declare the statement
+
                 PreparedStatement statementGenre = conn.prepareStatement(queryGenre);
-
-                // Change the parameter
                 statementGenre.setString(1, movieId);
-
-                // Execute the query
                 ResultSet resultGenre = statementGenre.executeQuery();
 
                 JsonArray genreArray = new JsonArray();
-                // Iterate
+
                 while (resultGenre.next()) {
                     String genreName = resultGenre.getString("name");
                     genreArray.add(genreName);
