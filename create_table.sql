@@ -74,3 +74,5 @@ CREATE TABLE creditcards(
     expiration	DATE			NOT NULL,
     PRIMARY KEY (id)
 );
+
+ALTER TABLE sales ADD COLUMN quantity INT NOT NULL DEFAULT 1;
