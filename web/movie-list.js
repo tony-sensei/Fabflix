@@ -137,7 +137,7 @@ function handleMovieResult(resultData) {
     if (nextPage * maxsize <= totalMovie) {
         if (!genre && !letter) {
             url += "movie-list.html?title=" + title + "&year=" + year + "&director=" +
-                director + "&star=" + star + "&frontpage=" + nextPage +
+                director + "&star=" + star + "&page=" + nextPage +
                 "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
                 ratingSort + "&firstSort=" + firstSort;
         } else {
