@@ -26,26 +26,29 @@ function getParameterByName(target) {
 
 function handleResult(resultData) {
 
-    // populate the star info h3
-    // find the empty h3 body by id "star_info"
-    let starInfoElement = jQuery("#star_info");
+    let movieBodyElement = jQuery("#movie_table_body");
+    let rowHTML = "";
+    for (let i = 0; i <resultData[0]["movie_year"].length; i++) {
+        rowHTML += "<tr>";
+        rowHTML +=
+            "<th>" +
+            '<a href="single-movie.html?id=' + resultData[0]['movie_id_Array'][i] + '">'
+            + resultData[0]['movie_title'][i] +     // display movie_title for the link text
+            '</a>' +
+            "</th>";
 
-    let movieString = "";
-
-    for (let i = 0; i < resultData[0]["movie_title"].length; i++) {
-        movieString += '<a href="single-movie.html?id='
-            + resultData[0]['movie_id_Array'][i]
-            + '">'
-            + resultData[0]["movie_title"][i]
-            + "</a>; ";
+        rowHTML += "<th>" + resultData[0]["movie_year"][i] + "</th>";
+        rowHTML += "</tr>";
     }
-    movieString = movieString.slice(0, -2);
 
-    // append two html <p> created to the h3 body, which will refresh the page
+    movieBodyElement.append(rowHTML);
+
+
+    let starInfoElement = jQuery("#star_info");
     starInfoElement.append(
         "<dt class=\"col-sm-3\">Star Name"     + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["star_name"] + "</dd>" +
         "<dt class=\"col-sm-3\">Date Of Birth" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["star_dob"]  + "</dd>" +
-        "<dt class=\"col-sm-3\">Movies"        + "</dt>" + "<dd class=\"col-sm-9\">" + movieString                + "</dd>" );
+        "<dt class=\"col-sm-3\">Movies"        + "</dt>");
 }
 
 /**

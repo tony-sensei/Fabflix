@@ -21,6 +21,25 @@ function getParameterByName(target) {
 
 // Above function can be used parse Parameters in both single-movie.js and single-star.js
 
+function addToCart(movieId, movieTitle) {
+    console.log("add to cart");
+    $.ajax("api/shopping-cart-action",{
+        method: "POST",
+        data: { "movieId": movieId, "action": "add-to-cart", "movieTitle": movieTitle },
+        success: (resultData) => handleResultData(resultData)
+    });
+}
+
+function handleResultData(resultData) {
+    console.log("handle cart response");
+    console.log(resultData);
+    if ( resultData["status"] === "success" ) {
+        alert(resultData["message"]);
+    } else {
+        alert("fail to add to cart");
+    }
+}
+
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
  * @param resultData jsonObject
@@ -35,7 +54,11 @@ function handleResult(resultData) {
     // Get the genres from the resultData
     let genreString = "";
     for (let i = 0; i < resultData[0]["movie_genre"].length; i++) {
-        genreString += resultData[0]["movie_genre"][i];
+        genreString += '<a href="movie-list.html?genre='
+            + resultData[0]['movie_genre'][i]
+            + '">'
+            + resultData[0]["movie_genre"][i]
+            + "</a>; ";
         genreString += "; ";
     }
     genreString = genreString.slice(0, -2);
@@ -56,11 +79,13 @@ function handleResult(resultData) {
         "<dt class=\"col-sm-3\">Director" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_director"]  + "</dd>" +
         "<dt class=\"col-sm-3\">Genres" + "</dt>" + "<dd class=\"col-sm-9\">" + genreString  + "</dd>" +
         "<dt class=\"col-sm-3\">Stars" + "</dt>" + "<dd class=\"col-sm-9\">" + starString + "</dd>" +
-        "<dt class=\"col-sm-3\">Rating" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_rating"]  + "</dd>" );
-        // "<p>Director: "     + resultData[0]["movie_director"] + "</p>" +
-        // "<p>Genres: "       + genreString   + "</p>" +
-        // "<p>Stars: "       + starString   + "</p>" +
-        // "<p>Rating: "       + resultData[0]["movie_rating"]   + "</p>" );
+        "<dt class=\"col-sm-3\">Rating" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_rating"]  + "</dd>" +
+        "<dt class=\"col-sm-3\"></dt><dd class=\"col-sm-9\"><button class=\"btn btn-outline-success my-2 my-sm-0 mr-sm-2 \" onclick=\"addToCart(\'" +
+            resultData[0]['movie_id'] + "\', \'" + resultData[0]['movie_title'] + "\')\">Add to cart</button>" );
+    // "<p>Director: "     + resultData[0]["movie_director"] + "</p>" +
+    // "<p>Genres: "       + genreString   + "</p>" +
+    // "<p>Stars: "       + starString   + "</p>" +
+    // "<p>Rating: "       + resultData[0]["movie_rating"]   + "</p>" );
 }
 
 /**

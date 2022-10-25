@@ -33,8 +33,7 @@ public class MovieListServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        HttpSession session = request.getSession();
-//        HashMap<String, String> items = new HashMap<>();
+
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
@@ -94,8 +93,9 @@ public class MovieListServlet extends HttpServlet {
             //sort and sort order
             if(firstSort.equals("title")) {
                 queryTempTable = "WITH tempTable AS (" +
-                        "SELECT movieId, name " +
-                        "FROM movies ";
+                        "SELECT movieId, title as tempTitle, rating  " +
+                        "FROM movies, ratings " +
+                        "WHERE movies.id = ratings.movieId ";
                 if(titleSort.equals("asc")){
                     queryTempTable += "order by title asc ";
                     if(ratingSort.equals("asc"))
@@ -147,7 +147,6 @@ public class MovieListServlet extends HttpServlet {
             queryTempTable += ") ";
 //            queryTempTable += " limit " + maxsize + " offset " + offset + ") ";
             mainQuery = queryTempTable + mainQuery;
-            System.out.println(mainQuery);
 
 
             Statement statementMovie = conn.createStatement();
@@ -163,11 +162,11 @@ public class MovieListServlet extends HttpServlet {
                 String movie_director = rs.getString("director");
                 String movie_rating = rs.getString("rating");
                 String query2 = "select G.id, G.name " +
-                                "from genres_in_movies as GIM, genres as G " +
-                                "where G.id = GIM.genreId " +
-                                "and GIM.movieId = '" + movie_id +
-                                "' order by G.name " +
-                                "LIMIT 3";
+                        "from genres_in_movies as GIM, genres as G " +
+                        "where G.id = GIM.genreId " +
+                        "and GIM.movieId = '" + movie_id +
+                        "' order by G.name " +
+                        "LIMIT 3";
 
                 Statement statement2 = conn.createStatement();
                 ResultSet rs2 = statement2.executeQuery(query2);
@@ -187,12 +186,12 @@ public class MovieListServlet extends HttpServlet {
 
 
                 String query3 = "select S.id, S.name " +
-                                "from stars_in_movies as SIM, stars as S " +
-                                "where S.id = SIM.starId " +
-                                "and SIM.movieId = '"+ movie_id +
-                                "' order by (select count(*) from stars_in_movies as SIM2 " +
-                                            "where SIM2.starId = S.id) desc, S.name asc " +
-                                "LIMIT 3";
+                        "from stars_in_movies as SIM, stars as S " +
+                        "where S.id = SIM.starId " +
+                        "and SIM.movieId = '"+ movie_id +
+                        "' order by (select count(*) from stars_in_movies as SIM2 " +
+                        "where SIM2.starId = S.id) desc, S.name asc " +
+                        "LIMIT 3";
 
                 Statement statement3 = conn.createStatement();
                 ResultSet rs3 = statement3.executeQuery(query3);

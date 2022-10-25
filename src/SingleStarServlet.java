@@ -75,7 +75,7 @@ public class SingleStarServlet extends HttpServlet {
                 String starDob = rs.getString("birthYear") == null ? "N/A" : rs.getString("birthYear");
 
                 // Construct a query to get the movie by using id
-                String queryMovie = "SELECT DISTINCT m.id, m.title " +
+                String queryMovie = "SELECT DISTINCT m.id, m.title, m.year " +
                         "FROM movies as m, stars as s, stars_in_movies as sim " +
                         "WHERE sim.movieId = m.id and sim.starId = ?" +
                         "ORDER BY m.year desc, m.title asc";
@@ -92,13 +92,16 @@ public class SingleStarServlet extends HttpServlet {
 
                 JsonArray jsonArrayM = new JsonArray();
                 JsonArray jsonArrayMI = new JsonArray();
+                JsonArray jsonArrayY = new JsonArray();
 
                 // Iterate through each row of rsS
                 while (rsM.next()) {
                     String movieId = rsM.getString("id");
                     String movieTitle = rsM.getString("title");
+                    String movieYear = rsM.getString("year");
                     jsonArrayM.add(movieTitle);
                     jsonArrayMI.add(movieId);
+                    jsonArrayY.add(movieYear);
                 }
                 rsM.close();
                 statementMovie.close();
@@ -111,6 +114,7 @@ public class SingleStarServlet extends HttpServlet {
                 jsonObject.addProperty("star_dob", starDob);
                 jsonObject.add("movie_title", jsonArrayM);
                 jsonObject.add("movie_id_Array", jsonArrayMI);
+                jsonObject.add("movie_year", jsonArrayY);
 
                 jsonArray.add(jsonObject);
             }
