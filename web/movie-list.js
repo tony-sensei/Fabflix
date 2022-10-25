@@ -32,6 +32,24 @@ function getParameter(target) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+function addToCart(movieId, movieTitle) {
+    console.log("add to cart");
+    $.ajax("api/shopping-cart-action",{
+        method: "POST",
+        data: { "movieId": movieId, "action": "add-to-cart", "movieTitle": movieTitle },
+        success: (resultData) => handleResultData(resultData)
+    });
+}
+
+function handleResultData(resultData) {
+    console.log("handle cart response");
+    console.log(resultData);
+   if ( resultData["status"] === "success" ) {
+       alert(resultData["message"]);
+   } else {
+       alert("fail to add to cart");
+   }
+}
 
 function handleMovieResult(resultData) {
     console.log("handleStarResult: populating movieList table from resultData");
@@ -80,6 +98,8 @@ function handleMovieResult(resultData) {
         rowHTML += "<th>" + genreString + "</th>";
         rowHTML += "<th>" + starString + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
+        rowHTML += "<th><button class=\"btn btn-outline-success my-2 my-sm-0 mr-sm-2 \" onclick=\"addToCart(\'" +
+            resultData[i]['movie_id'] + "\', \'" + resultData[i]['movie_title'] + "\')\">Add to cart</button>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
