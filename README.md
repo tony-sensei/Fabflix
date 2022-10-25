@@ -20,7 +20,7 @@ Zimu Qian: Implement single-movie and single-star pages; Beautify all pages.
 Project 2:
 
 Demo Video URL:
-
+https://youtu.be/-GxIBRpbkKI
 
 How to deplpy this application with Tomcat:
 Step 1: Git clone
