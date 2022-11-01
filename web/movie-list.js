@@ -15,7 +15,6 @@ if(getParameter("page") != null)
 if(getParameter("maxsize") != null)
     maxsize = parseInt(getParameter("maxsize"));
 
-console.log("get");
 function getParameter(target) {
     // Get request URL
     let url = window.location.href;
@@ -69,13 +68,28 @@ function handleMovieResult(resultData) {
         }
         genreString = genreString.slice(0, -2);
 
+
         // Get the stars
         let starArray = resultData[i]["movie_stars"];
         let starString = "";
         for (let j = 0; j < Math.min(3, starArray.length); j++) {
-            starString += '<a href="single-star.html?id='
-                            + starArray[j]["star_id"]
-                            + '&page=0&maxsize=25&titleSort=desc&ratingSort=desc&firstSort=rating">'
+            let singleStarURL = "single-star.html?id=" + starArray[j]["star_id"];
+            if (!genre && !letter) {
+                singleStarURL += "&title=" + title + "&year=" + year + "&director=" + director + "&star=" + star +
+                    "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                    ratingSort + "&firstSort=" + firstSort;
+            } else {
+                if (!letter) {
+                    singleStarURL += "&genre=" + genre + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                        ratingSort + "&firstSort=" + firstSort;
+                } else {
+                    singleStarURL += "&letter=" + letter + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                        ratingSort + "&firstSort=" + firstSort;
+                }
+            }
+            console.log(singleStarURL);
+
+            starString += "<a href=" + singleStarURL + ">"
                             + starArray[j]["star_name"]
                             + "</a>; ";
         }
@@ -85,12 +99,28 @@ function handleMovieResult(resultData) {
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
         rowHTML += "<tr>";
+
+        let singleMovieURL = "single-movie.html?id='" + resultData[i]['movie_id'];
+        if (!genre && !letter) {
+            singleMovieURL += "&title=" + title + "&year=" + year + "&director=" + director + "&star=" + star +
+                "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                ratingSort + "&firstSort=" + firstSort;
+        } else {
+            if (!letter) {
+                singleMovieURL += "&genre=" + genre + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                    ratingSort + "&firstSort=" + firstSort;
+            } else {
+                singleMovieURL += "&letter=" + letter + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                    ratingSort + "&firstSort=" + firstSort;
+            }
+        }
+
         rowHTML +=
             "<th>" +
             // Add a link to single-movie.html with id passed with GET url parameter
-            '<a href="single-movie.html?id=' + resultData[i]['movie_id'] + '">'
+            "<a href=" + singleMovieURL + ">"
             + resultData[i]["movie_title"] +     // display movie_title for the link text
-            '</a>' +
+            "</a>" +
             "</th>";
 
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
@@ -157,10 +187,36 @@ function handleMovieResult(resultData) {
 
 }
 
+//movieList jump
+let jumpElement = jQuery("#movieListJump");
+let rowHTML = "";
+let url = "";
+
+if (!genre && !letter) {
+    url += "movie-list.html?title=" + title + "&year=" + year + "&director=" +
+        director + "&star=" + star + "&page=" + page +
+        "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+        ratingSort + "&firstSort=" + firstSort;
+}
+
+if (!letter) {
+    url += "movie-list.html?genre=" + genre + "&page=" + page +
+        "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+        ratingSort + "&firstSort=" + firstSort;
+} else {
+    url += "movie-list.html?letter=" + letter + "&page=" + page +
+        "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+        ratingSort + "&firstSort=" + firstSort;
+}
+rowHTML += "<a class='nav-link ' href='" + url + "'>Movie Lists </a>";
+// console.log(rowHTML);
+jumpElement.append(rowHTML)
+
+
 // maxsize select
 let maxsizeElement = jQuery("#maxsize");
 let choiceSize = [10, 25, 50, 100];
-let rowHTML = "";
+rowHTML = "";
 for (let i = 0; i < choiceSize.length; i++) {
     let url = "";
     if (!genre && !letter) {

@@ -1,8 +1,15 @@
-/**
- * Retrieve parameter from request URL, matching by parameter name
- * @param target String
- * @returns {*}
- */
+let title = getParameterByName("title");
+let year = getParameterByName("year");
+let director = getParameterByName("director");
+let star = getParameterByName("star");
+let genre = getParameterByName("genre");
+let letter = getParameterByName("letter");
+let page = getParameterByName("page");
+let maxsize = getParameterByName("maxsize");
+let titleSort = getParameterByName("titleSort");
+let ratingSort = getParameterByName("ratingSort");
+let firstSort = getParameterByName("firstSort");
+
 function getParameterByName(target) {
     // Get request URL
     let url = window.location.href;
@@ -40,10 +47,7 @@ function handleResultData(resultData) {
     }
 }
 
-/**
- * Handles the data returned by the API, read the jsonObject and populate data into html elements
- * @param resultData jsonObject
- */
+
 
 function handleResult(resultData) {
 
@@ -92,13 +96,62 @@ function handleResult(resultData) {
  * Once this .js is loaded, following scripts will be executed by the browser\
  */
 
-// Get id from URL
+//movieList jump
+let jumpElement = jQuery("#movieListJump");
+let rowHTML = "";
+let url = "";
+
+if (!genre && !letter) {
+    url += "movie-list.html?title=" + title + "&year=" + year + "&director=" +
+        director + "&star=" + star + "&page=" + page +
+        "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+        ratingSort + "&firstSort=" + firstSort;
+}
+
+if (!letter) {
+    url += "movie-list.html?genre=" + genre + "&page=" + page +
+        "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+        ratingSort + "&firstSort=" + firstSort;
+} else {
+    url += "movie-list.html?letter=" + letter + "&page=" + page +
+        "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+        ratingSort + "&firstSort=" + firstSort;
+}
+rowHTML += "<a class='nav-link ' href='" + url + "'>Movie Lists </a>";
+// console.log(rowHTML);
+jumpElement.append(rowHTML)
+
+
 let movieId = getParameterByName('id');
 
-// Makes the HTTP GET request and registers on success callback function handleResult
-jQuery.ajax({
-    dataType: "json",
-    method: "GET", // Setting request method GET
-    url: "api/single-movie?id=" + movieId, // Setting request url, which is mapped by MoviesServlet in Movies.java
-    success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleMovieServlet
-});
+if (!genre && !letter) {
+    jQuery.ajax({
+        dataType: "json",
+        method: "GET",
+        url: "api/single-movie?id=" + movieId + "&title=" + title + "&year=" + year +
+            "&director=" + director + "&star=" + star + "&page=" +
+            page + "&maxsize=" + maxsize + "&titleSort=" + titleSort +
+            "&ratingSort=" + ratingSort + "&firstSort=" + firstSort,
+        success: (resultData) => handleResult(resultData)
+    });
+} else {
+    if (!letter) {
+        jQuery.ajax({
+            dataType: "json",
+            method: "GET",
+            url: "api/single-movie?id=" + movieId + "&genre=" + genre + "&page=" + page +
+                "&maxsize=" + maxsize + "&titleSort=" + titleSort +
+                "&ratingSort=" + ratingSort + "&firstSort=" + firstSort,
+            success: (resultData) => handleResult(resultData)
+        });
+    } else {
+        jQuery.ajax({
+            dataType: "json",
+            method: "GET",
+            url: "api/single-movie?id=" + movieId + "&letter=" + letter + "&page=" + page +
+                "&maxsize=" + maxsize + "&titleSort=" + titleSort +
+                "&ratingSort=" + ratingSort + "&firstSort=" + firstSort,
+            success: (resultData) => handleResult(resultData)
+        });
+    }
+}
