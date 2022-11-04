@@ -57,22 +57,53 @@ function handleResult(resultData) {
 
     // Get the genres from the resultData
     let genreString = "";
-    for (let i = 0; i < resultData[0]["movie_genre"].length; i++) {
+    let genreList = [];
+    for (let i = 0; i < resultData.length; i++) {
+        let curGenre = resultData[i]['movie_genre'];
+        if(!genreList.includes(curGenre))
+            genreList.push(curGenre);
+        else continue;
+    }
+    for (let i = 0; i < genreList.length; i++) {
         genreString += '<a href="movie-list.html?genre='
-            + resultData[0]['movie_genre'][i]
+            + genreList[i]
             + '">'
-            + resultData[0]["movie_genre"][i]
+            + genreList[i]
             + "</a>; ";
-        genreString += "; ";
     }
     genreString = genreString.slice(0, -2);
 
     let starString = "";
-    for (let i = 0; i < resultData[0]["movie_star"].length; i++) {
-        starString += '<a href="single-star.html?id='
-            + resultData[0]['star_id_Array'][i]
+    let starList = [];
+    let starIdList = [];
+    for (let i = 0; i < resultData.length; i++) {
+        let curStar = resultData[i]['movie_star'];
+        let curStarId = resultData[i]['movie_star_id'];
+        if(!starList.includes(curStar)){
+            starList.push(curStar);
+            starIdList.push(curStarId);
+        }
+        else continue;
+    }
+    for (let i = 0; i < starList.length; i++) {
+        let singleStarURL = "single-star.html?id=" + starIdList[i];
+        if (!genre && !letter) {
+            singleStarURL += "&title=" + title + "&year=" + year + "&director=" + director + "&star=" + star +
+                "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                ratingSort + "&firstSort=" + firstSort;
+        } else {
+            if (!letter) {
+                singleStarURL += "&genre=" + genre + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                    ratingSort + "&firstSort=" + firstSort;
+            } else {
+                singleStarURL += "&letter=" + letter + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                    ratingSort + "&firstSort=" + firstSort;
+            }
+        }
+        starString += '<a href="'
+            + singleStarURL
             + '">'
-            + resultData[0]["movie_star"][i]
+            + starList[i]
             + "</a>; ";
     }
     starString = starString.slice(0, -2);
@@ -86,10 +117,7 @@ function handleResult(resultData) {
         "<dt class=\"col-sm-3\">Rating" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_rating"]  + "</dd>" +
         "<dt class=\"col-sm-3\"></dt><dd class=\"col-sm-9\"><button class=\"btn btn-outline-success my-2 my-sm-0 mr-sm-2 \" onclick=\"addToCart(\'" +
             resultData[0]['movie_id'] + "\', \'" + resultData[0]['movie_title'] + "\')\">Add to cart</button>" );
-    // "<p>Director: "     + resultData[0]["movie_director"] + "</p>" +
-    // "<p>Genres: "       + genreString   + "</p>" +
-    // "<p>Stars: "       + starString   + "</p>" +
-    // "<p>Rating: "       + resultData[0]["movie_rating"]   + "</p>" );
+
 }
 
 /**

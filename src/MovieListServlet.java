@@ -12,8 +12,12 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
@@ -66,24 +70,55 @@ public class MovieListServlet extends HttpServlet {
                     "AND S.id = SIM.starId AND GIM.movieId = M.id " +
                     "AND GIM.genreId = G.id ";
 
+            //checking which parameter is typed
+            ArrayList<Integer> checkList = new ArrayList<Integer>(
+                    Arrays.asList(0, 0, 0, 0)
+            );
+            ArrayList<String> paramList = new ArrayList<String>(
+                    Arrays.asList("null","null","null","null")
+            );
 
             if (genre == null && letter == null) {
-                if (!title.equals("null"))
-                    mainQuery += "AND title LIKE '%" + title + "%' ";
-                if (!year.equals("null"))
-                    mainQuery += "AND year = " + year + " ";
-                if (!director.equals("null"))
-                    mainQuery += "AND director LIKE '%" + director + "%' ";
-                if (!star.equals("null"))
-                    mainQuery += "AND S.name LIKE '%" + star + "%' ";
+                if (!title.equals("null")) {
+                    mainQuery += "AND title LIKE ? ";
+                    checkList.set(0, 1);
+                    String curParam = "%" + title + "%";
+                    paramList.set(0, curParam);
+                }
+//                    mainQuery += "AND title LIKE '%" + title + "%' ";
+                if (!year.equals("null")){
+                    mainQuery += "AND year = ? ";
+                    checkList.set(1, 1);
+                    String curParam = year;
+                    paramList.set(1, curParam);
+                }
+//                    mainQuery += "AND year = " + year + " ";
+
+                if (!director.equals("null")){
+                    mainQuery += "AND director LIKE ? ";
+                    checkList.set(2, 1);
+                    String curParam = "%" + director + "%";
+                    paramList.set(2, curParam);
+                }
+//                    mainQuery += "AND director LIKE '%" + director + "%' ";
+                if (!star.equals("null")){
+                    mainQuery += "AND S.name LIKE ? ";
+                    checkList.set(3, 1);
+                    String curParam = "%" + star + "%";
+                    paramList.set(3, curParam);
+                }
+//                    mainQuery += "AND S.name LIKE '%" + star + "%' ";
+
             } else {
                 if (letter == null) {
-                    mainQuery += "AND G.name = '" + genre + "' ";
+//                    mainQuery += "AND G.name = '" + genre + "' ";
+                    mainQuery += "AND G.name = ? ";
                 } else {
                     if (letter.equals("*")) {
-                        mainQuery += "AND title REGEXP '^[^a-z0-9A-z]'";
+                        mainQuery += "AND title REGEXP '^[^a-z0-9A-z]' ";
                     } else {
-                        mainQuery += "AND title LIKE '" + letter + "%' ";
+//                        mainQuery += "AND title LIKE '" + letter + "%' ";
+                        mainQuery += "AND title LIKE ? ";
                     }
                 }
             }
@@ -93,7 +128,7 @@ public class MovieListServlet extends HttpServlet {
             //sort and sort order
             if(firstSort.equals("title")) {
                 queryTempTable = "WITH tempTable AS (" +
-                        "SELECT movieId, title as tempTitle, rating  " +
+                        "SELECT movieId, title as tempTitle, rating " +
                         "FROM movies, ratings " +
                         "WHERE movies.id = ratings.movieId ";
                 if(titleSort.equals("asc")){
@@ -112,8 +147,8 @@ public class MovieListServlet extends HttpServlet {
                 }
             } else {
                 queryTempTable = "WITH tempTable AS (" +
-                        "SELECT movieId, rating " +
-                        "FROM ratings ";
+                                "SELECT movieId, rating " +
+                                "FROM ratings ";
                 if(ratingSort.equals("asc")){
                     queryTempTable += "order by rating asc ";
                     if(titleSort.equals("asc"))
@@ -141,16 +176,46 @@ public class MovieListServlet extends HttpServlet {
             statement.close();
 
 
-
             //pagination
-            mainQuery += " limit " + maxsize + " offset " + offset + "; ";
+//            mainQuery += " limit " + maxsize + " offset " + offset + "; ";
+            mainQuery += " limit ? offset ?; ";
             queryTempTable += ") ";
-//            queryTempTable += " limit " + maxsize + " offset " + offset + ") ";
             mainQuery = queryTempTable + mainQuery;
+            System.out.println(mainQuery);
 
+            PreparedStatement statementMovie = conn.prepareStatement(mainQuery);
 
-            Statement statementMovie = conn.createStatement();
-            ResultSet rs = statementMovie.executeQuery(mainQuery);
+            int numOfParam = 1;
+            if (genre == null && letter == null){
+                for(int i = 0; i < 4; i++) {
+                    if(checkList.get(i) == 1) {
+                        if(i == 1) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
+                        else statementMovie.setString(numOfParam, paramList.get(i));
+                        numOfParam++;
+                    }
+                }
+            }
+            else{
+                if (letter == null) {
+//                    mainQuery += "AND G.name = '" + genre + "' ";
+                    statementMovie.setString(numOfParam, genre);
+                    numOfParam++;
+                } else {
+                    if (letter.equals("*")) {
+                        mainQuery += "AND title REGEXP '^[^a-z0-9A-z]' ";
+                    } else {
+//                        mainQuery += "AND title LIKE '" + letter + "%' ";
+                        String letterParam = letter + "%";
+                        statementMovie.setString(numOfParam, letterParam);
+                        numOfParam++;
+                    }
+                }
+            }
+            statementMovie.setInt(numOfParam, parseInt(maxsize));
+            numOfParam++;
+            statementMovie.setInt(numOfParam, offset);
+
+            ResultSet rs = statementMovie.executeQuery();
 
             JsonArray jsonArray = new JsonArray();
 
@@ -164,15 +229,15 @@ public class MovieListServlet extends HttpServlet {
                 String query2 = "select G.id, G.name " +
                         "from genres_in_movies as GIM, genres as G " +
                         "where G.id = GIM.genreId " +
-                        "and GIM.movieId = '" + movie_id +
-                        "' order by G.name " +
+                        "and GIM.movieId = ? " +
+                        "order by G.name " +
                         "LIMIT 3";
 
-                Statement statement2 = conn.createStatement();
-                ResultSet rs2 = statement2.executeQuery(query2);
+                PreparedStatement statement2 = conn.prepareStatement(query2);
+                statement2.setString(1, movie_id);
+                ResultSet rs2 = statement2.executeQuery();
+
                 JsonArray movieGenres = new JsonArray();
-
-
                 while (rs2.next()) {
                     JsonObject obj = new JsonObject();
                     obj.addProperty("genre_id", rs2.getString("id"));
@@ -188,13 +253,15 @@ public class MovieListServlet extends HttpServlet {
                 String query3 = "select S.id, S.name " +
                         "from stars_in_movies as SIM, stars as S " +
                         "where S.id = SIM.starId " +
-                        "and SIM.movieId = '"+ movie_id +
-                        "' order by (select count(*) from stars_in_movies as SIM2 " +
+                        "and SIM.movieId = ? " +
+                        " order by (select count(*) from stars_in_movies as SIM2 " +
                         "where SIM2.starId = S.id) desc, S.name asc " +
                         "LIMIT 3";
 
-                Statement statement3 = conn.createStatement();
-                ResultSet rs3 = statement3.executeQuery(query3);
+                PreparedStatement statement3 = conn.prepareStatement(query3);
+                statement3.setString(1, movie_id);
+                ResultSet rs3 = statement3.executeQuery();
+
                 JsonArray movieStars = new JsonArray();
                 while (rs3.next()) {
                     JsonObject obj = new JsonObject();

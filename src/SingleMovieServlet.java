@@ -51,86 +51,63 @@ public class SingleMovieServlet extends HttpServlet {
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
-            String query = "SELECT sim.movieId, title, year, director, sim.starId, s.name as sname, birthYear, rating " +
-                    "from stars as s, stars_in_movies as sim, movies as m, ratings as r " +
-                    "where m.id = sim.movieId and sim.starId = s.id and m.id = r.movieId and m.id = ?";
+            String query = "WITH StarsOtherMovies AS (" +
+                            "SELECT " +
+                                "stars_in_movies.starId, " +
+                                "COUNT(*) AS movieCount " +
+                            "FROM stars_in_movies " +
+                            "WHERE movieId = ? " +
+                            "GROUP BY 1) " +
+                            "SELECT " +
+                                "movies.id AS movieID, " +
+                                "movies.title, " +
+                                "movies.year, " +
+                                "movies.director, " +
+                                "genres.name AS genreName, " +
+                                "stars.id AS starID, " +
+                                "stars.name AS starName, " +
+                                "ratings.rating " +
+                            "FROM movies " +
+                            "JOIN stars_in_movies ON (movies.id = stars_in_movies.movieId) " +
+                            "JOIN stars ON (stars.id = stars_in_movies.starId) " +
+                            "JOIN ratings ON (ratings.movieId = stars_in_movies.movieId) " +
+                            "JOIN genres_in_movies ON ( movies.id = genres_in_movies.movieId) " +
+                            "JOIN genres ON (genres.id = genres_in_movies.genreId) " +
+                            "JOIN StarsOtherMovies ON ( StarsOtherMovies.starId = stars_in_movies.starId) " +
+                            "WHERE movies.id = ? " +
+                            "ORDER BY movieCount DESC, starName ASC, genreName ASC";
 
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, id);
+            statement.setString(2, id);
             ResultSet rs = statement.executeQuery();
 
             JsonArray jsonArray = new JsonArray();
 
             while (rs.next()) {
 
-                String movieId = rs.getString("movieId");
+                String movieId = rs.getString("movieID");
                 String movieTitle = rs.getString("title");
                 String movieYear = rs.getString("year");
                 String movieDirector = rs.getString("director");
+                String movieGenre = rs.getString("genreName");
+                String movieStarId = rs.getString("starID");
+                String movieStarName = rs.getString("starName");
                 String movieRating = rs.getString("rating");
 
-                String queryGenre = "SELECT DISTINCT name " +
-                        "FROM movies as m, genres as g, genres_in_movies as gim " +
-                        "WHERE gim.genreId = g.id and gim.movieId = ?";
-
-
-                PreparedStatement statementGenre = conn.prepareStatement(queryGenre);
-                statementGenre.setString(1, movieId);
-                ResultSet resultGenre = statementGenre.executeQuery();
-
-                JsonArray genreArray = new JsonArray();
-
-                while (resultGenre.next()) {
-                    String genreName = resultGenre.getString("name");
-                    genreArray.add(genreName);
-                }
-                resultGenre.close();
-                statementGenre.close();
-
-
-                // Construct a query to get the stars by using id
-                String queryStar = "SELECT DISTINCT s.id, s.name " +
-                        "FROM movies as m, stars as s, stars_in_movies as sim " +
-                        "WHERE sim.starId = s.id and sim.movieId = ? " +
-                        " order by (select count(*) from stars_in_movies as sim2 " +
-                        "where sim2.starId = s.id) desc, s.name asc ";
-
-                // Declare the statement
-                PreparedStatement statementStar = conn.prepareStatement(queryStar);
-
-                // Change the parameter
-                statementStar.setString(1, movieId);
-
-
-                // Execute the query
-                ResultSet rsS = statementStar.executeQuery();
-
-                JsonArray jsonArrayS = new JsonArray();
-                JsonArray jsonArraySI = new JsonArray();
-
-                // Iterate through each row of rsS
-                while (rsS.next()) {
-                    String starId = rsS.getString("id");
-                    String starName = rsS.getString("name");
-                    jsonArrayS.add(starName);
-                    jsonArraySI.add(starId);
-                }
-                rsS.close();
-                statementStar.close();
 
 
                 // Create a JsonObject based on the data we retrieve from rs
 
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.add("movie_star", jsonArrayS);
-                jsonObject.add("star_id_Array", jsonArraySI);
-                jsonObject.add("movie_genre", genreArray);
+                jsonObject.addProperty("movie_star", movieStarName);
+                jsonObject.addProperty("movie_star_id", movieStarId);
+                jsonObject.addProperty("movie_genre", movieGenre);
                 jsonObject.addProperty("movie_id", movieId);
                 jsonObject.addProperty("movie_title", movieTitle);
                 jsonObject.addProperty("movie_year", movieYear);
                 jsonObject.addProperty("movie_director", movieDirector);
                 jsonObject.addProperty("movie_rating", movieRating);
-
                 jsonArray.add(jsonObject);
             }
             rs.close();

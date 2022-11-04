@@ -100,7 +100,7 @@ function handleMovieResult(resultData) {
         let rowHTML = "";
         rowHTML += "<tr>";
 
-        let singleMovieURL = "single-movie.html?id='" + resultData[i]['movie_id'];
+        let singleMovieURL = "single-movie.html?id=" + resultData[i]['movie_id'];
         if (!genre && !letter) {
             singleMovieURL += "&title=" + title + "&year=" + year + "&director=" + director + "&star=" + star +
                 "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +

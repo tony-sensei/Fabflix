@@ -33,16 +33,30 @@ function handleResult(resultData) {
 
     let movieBodyElement = jQuery("#movie_table_body");
     let rowHTML = "";
-    for (let i = 0; i <resultData[0]["movie_year"].length; i++) {
+    for (let i = 0; i <resultData.length; i++) {
+        let singleMovieURL = "single-movie.html?id=" + resultData[i]["movie_id"];
+        if (!genre && !letter) {
+            singleMovieURL += "&title=" + title + "&year=" + year + "&director=" + director + "&star=" + star +
+                "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                ratingSort + "&firstSort=" + firstSort;
+        } else {
+            if (!letter) {
+                singleMovieURL += "&genre=" + genre + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                    ratingSort + "&firstSort=" + firstSort;
+            } else {
+                singleMovieURL += "&letter=" + letter + "&page=" + page + "&maxsize=" + maxsize + "&titleSort=" + titleSort + "&ratingSort=" +
+                    ratingSort + "&firstSort=" + firstSort;
+            }
+        }
         rowHTML += "<tr>";
         rowHTML +=
             "<th>" +
-            '<a href="single-movie.html?id=' + resultData[0]['movie_id_Array'][i] + '">'
-            + resultData[0]['movie_title'][i] +     // display movie_title for the link text
+            '<a href="' + singleMovieURL + '">'
+            + resultData[i]["movie_title"] +     // display movie_title for the link text
             '</a>' +
             "</th>";
 
-        rowHTML += "<th>" + resultData[0]["movie_year"][i] + "</th>";
+        rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "</tr>";
     }
 
