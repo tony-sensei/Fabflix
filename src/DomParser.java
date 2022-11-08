@@ -19,41 +19,73 @@ import java.util.Set;
 
 public class DomParser {
 
-    List<Movie> movies = new ArrayList<>();
-    Set<String> genres = new HashSet<>();
-    List<Actor> actors = new ArrayList<>();
-    List<GenresInMovies> gims = new ArrayList<>();
-    List<StarsInMovies> sims = new ArrayList<>();
-    int gimCount = 0;
-    int simCount = 0;
+//    List<Movie> movies = new ArrayList<>();
+//    Set<String> genres = new HashSet<>();
+//    List<Actor> actors = new ArrayList<>();
+    private List<GenresInMovies> gims = new ArrayList<>();
+    private List<StarsInMovies> sims = new ArrayList<>();
+    private int gimCount = 0;
+    private int simCount = 0;
 
-    Connection conn;
+    private static Connection conn;
 
+    private Document domActor;
+    private Document domCast;
+    private Document domMain;
 
+//    public static void main(String[] args) throws Exception {
+//        try {
+//            String myUrl = "jdbc:mysql://localhost:3306/movieDB";
+//            Class.forName("com.mysql.jdbc.Driver");
+//            conn = DriverManager.getConnection(myUrl, "mytestuser", "CS122Bupup!");
+//            // parse the xml file and get the dom object
+//            parseXmlFile();
+//
+//            parseDocument();
+//
+//            // iterate through the list and print the data
+//            printData();
+//
+//            handleInsertion();
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//        System.out.println("finish");
+//    }
+    public void runExample() throws Exception {
+        String myUrl = "jdbc:mysql://localhost:3306/movieDB";
+        String loginUser = "mytestuser";
+        String loginPasswd = "CS122Bupup!";
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+        conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
+        // parse the xml file and get the dom object
+        parseXmlFile();
 
-    Document domActor;
-    Document domCast;
-    Document domMain;
+        parseDocument();
 
-    public void runExample() {
-        try {
-            String myUrl = "jdbc:mysql://localhost:3306/movieDB";
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(myUrl, "mytestuser", "CS122Bupup!");
-            // parse the xml file and get the dom object
-            parseXmlFile();
+        // iterate through the list and print the data
+        printData();
 
-            parseDocument();
-
-            // iterate through the list and print the data
-            printData();
-
-            handleInsertion();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        handleInsertion();
+//        try {
+//            String myUrl = "jdbc:mysql://localhost:3306/movieDB";
+//            String loginUser = "mytestuser";
+//            String loginPasswd = "CS122Bupup!";
+//            Class.forName("com.mysql.jdbc.Driver").newInstance();
+//            conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
+//            // parse the xml file and get the dom object
+//            parseXmlFile();
+//
+//            parseDocument();
+//
+//            // iterate through the list and print the data
+//            printData();
+//
+//            handleInsertion();
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
         System.out.println("finish");
-
     }
 
     private void parseXmlFile() {
@@ -376,7 +408,7 @@ public class DomParser {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // create an instance
         DomParser domParserExample = new DomParser();
         // call run example
