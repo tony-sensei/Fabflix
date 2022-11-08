@@ -24,7 +24,10 @@ public class DomParser {
     List<Actor> actors = new ArrayList<>();
     List<GenresInMovies> gims = new ArrayList<>();
     List<StarsInMovies> sims = new ArrayList<>();
+    int gimCount = 0;
+    int simCount = 0;
 
+    Connection conn;
 
 
 
@@ -33,13 +36,23 @@ public class DomParser {
     Document domMain;
 
     public void runExample() {
-        // parse the xml file and get the dom object
-        parseXmlFile();
+        try {
+            String myUrl = "jdbc:mysql://localhost:3306/movieDB";
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(myUrl, "mytestuser", "CS122Bupup!");
+            // parse the xml file and get the dom object
+            parseXmlFile();
 
-        parseDocument();
+            parseDocument();
 
-        // iterate through the list and print the data
-        printData();
+            // iterate through the list and print the data
+            printData();
+
+            handleInsertion();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        System.out.println("finish");
 
     }
 
@@ -71,10 +84,14 @@ public class DomParser {
         NodeList nodeDFCastList = documentCastElement.getElementsByTagName("dirfilms");
         NodeList nodeDFMainList = documentMainElement.getElementsByTagName("directorfilms");
 
+        int movieCount = 0;
+
+
         //main.xml
         if (nodeDFMainList != null) {
-//            for (int i = 0; i < nodeDFMainList.getLength(); i++) {
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < nodeDFMainList.getLength(); i++) {
+
+//            for (int i = 0; i < 3; i++) {
 
                 // get the directorFilms element
                 Element dfElement = (Element) nodeDFMainList.item(i);
@@ -93,12 +110,11 @@ public class DomParser {
                     for (int j = 0; j < nodeFilmsList.getLength(); j++) {
                         Element singleFilmElement = (Element) nodeFilmsList.item(j);
                         Movie movie = parseMovie(singleFilmElement, dirname);
+                        movieCount++;
+                        if(movieCount % 1000 == 0) System.out.println("movie inserted: " + movieCount);
                         if(movie.getDirector() != null && movie.getYear() != -1 && movie.getDirector() != null) {
+                            String movieId = movie.getId();
                             try {
-                                String myUrl = "jdbc:mysql://localhost:3306/movieDB";
-                                Class.forName("com.mysql.jdbc.Driver");
-                                Connection conn = DriverManager.getConnection(myUrl, "mytestuser", "CS122Bupup!");
-
                                 CallableStatement insertMovieStatement = conn.prepareCall(" {CALL add_movie4(?, ?, ?, ?)}");
                                 insertMovieStatement.setString(1, movie.getId());
                                 insertMovieStatement.setString(2, movie.getTitle());
@@ -106,7 +122,7 @@ public class DomParser {
                                 insertMovieStatement.setString(4, movie.getDirector());
                                 insertMovieStatement.registerOutParameter(1, Types.VARCHAR);
                                 insertMovieStatement.execute();
-                                String movieId = insertMovieStatement.getString(1);
+                                movieId = insertMovieStatement.getString(1);
                             } catch (Exception e) {
                                 System.out.println(e);
                             }
@@ -119,10 +135,10 @@ public class DomParser {
                                 for (int k = 0; k < nodeCatList.getLength(); k++) {
                                     Element singleCatElement = (Element) nodeCatList.item(k);
                                     try {
-                                        GenresInMovies gim = parseGIM(singleCatElement, movie.getId()); // TODO:change movieID
+                                        GenresInMovies gim = parseGIM(singleCatElement, movieId);
                                         if(singleCatElement != null) gims.add(gim);
                                     } catch (Exception gimE) {
-                                        System.out.println("Error for GIM when movieId:" + movie.getId()); // TODO:change movieID
+                                        System.out.println("Error for GIM when movieId:" + movieId);
                                     }
                                 }
                             }
@@ -143,19 +159,31 @@ public class DomParser {
                     Element mElement = (Element) filmcList.item(j);
                     if(movieId == null) movieId = getTextValue(mElement, "f");
                     StarsInMovies sim = parseSIM(mElement, movieId);
-                    sims.add(sim);
+                    if(sim.getStageName() != null) sims.add(sim);
                 }
             }
         }
 
         //actor.xml
         if (nodeActorList != null) {
-            for (int i = 0; i < nodeActorList.getLength(); i++) {
-//            for (int i = 0; i < 3; i++) {
-                Element actorElement = (Element) nodeActorList.item(i);
-                Actor actor = parseActor(actorElement);
-                if(actor.getStageName() != null) actors.add(actor);
+            try {
+                for (int i = 0; i < nodeActorList.getLength(); i++) {
+//                for (int i = 0; i < 3; i++) {
+                    Element actorElement = (Element) nodeActorList.item(i);
+                    Actor actor = parseActor(actorElement);
+
+                    if(actor.getStageName() != null) {
+                        CallableStatement insertActorStatement = conn.prepareCall(" {CALL add_star(?, ?, ?)}");
+                        insertActorStatement.setString(1, actor.getStageName());
+                        insertActorStatement.setInt(2, actor.getDob());
+                        insertActorStatement.registerOutParameter(3, Types.VARCHAR);
+                        insertActorStatement.execute();
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println(e);
             }
+
         }
     }
 
@@ -174,20 +202,20 @@ public class DomParser {
             String genreName = element.getFirstChild().getNodeValue();
             int genreId = -1;
             if(genreName != null) {
-//                try (Connection conn = dataSource.getConnection()){
                 try {
-                    String myUrl = "jdbc:mysql://localhost:3306/movieDB";
-                    Class.forName("com.mysql.jdbc.Driver");
-                    Connection conn = DriverManager.getConnection(myUrl, "mytestuser", "CS122Bupup!");
-
-                    String findGenreQuery = "SELECT id FROM genres WHERE genres.name = ? ";
+                    String findGenreQuery = "SELECT id, name " +
+                                            "FROM genres " +
+                                            "WHERE MATCH (name) AGAINST (? IN boolean MODE) " +
+                                            "OR soundex(name) like soundex(?);";
                     PreparedStatement findGenreStatement = conn.prepareStatement(findGenreQuery);
-                    findGenreStatement.setString(1, genreName);
+                    findGenreStatement.setString(1, genreName + '*');
+                    findGenreStatement.setString(2, genreName);
                     ResultSet resId = findGenreStatement.executeQuery();
 
 
                     if(resId.next()) {
                         genreId = resId.getInt("id");
+                        return new GenresInMovies(movieId, genreId);
                     } else {
                         String insertGenreQuery = "INSERT INTO genres(name) VALUES(?)";
                         PreparedStatement insertGenreStatement = conn.prepareStatement(insertGenreQuery);
@@ -195,12 +223,11 @@ public class DomParser {
                         insertGenreStatement.execute();
                         insertGenreStatement.close();
 
-                        String getGenreQuery = "SELECT id FROM genres WHERE genres.name = ? ";
+                        String getGenreQuery = "SELECT LAST_INSERT_ID()";
                         PreparedStatement getGenreStatement = conn.prepareStatement(getGenreQuery);
-                        getGenreStatement.setString(1, genreName);
                         ResultSet resId2 = getGenreStatement.executeQuery();
                         resId2.next();
-                        genreId = resId2.getInt("id");
+                        genreId = resId2.getInt(1);
 
                         resId2.close();
                         getGenreStatement.close();
@@ -210,7 +237,7 @@ public class DomParser {
                     findGenreStatement.close();
 
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    System.out.println(e.getMessage());
                 }
             }
             return new GenresInMovies(movieId, genreId);
@@ -297,54 +324,56 @@ public class DomParser {
 
     private void handleInsertion() {
 //        try (Connection conn = dataSource.getConnection()){
-        try {
-            String myUrl = "jdbc:mysql://localhost:3306/movieDB";
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(myUrl, "mytestuser", "CS122Bupup!");
-
-            for (Actor actor : actors) {
+            for (GenresInMovies gim : gims) {
                 try{
-                    //TODO: add actor
-                } catch (Exception actorInsertError) {
-                    System.out.println("Actor not added:\t" + actor.toString());
+                    String insertGIMQuery = "INSERT INTO genres_in_movies(genreId, movieId) VALUES(?, ?)";
+                    gimCount++;
+                    if(gimCount % 1000 == 0) System.out.println("gim inserted: " + gimCount);
+                    PreparedStatement insertGIMStatement = conn.prepareStatement(insertGIMQuery);
+                    insertGIMStatement.setInt(1, gim.getGenreId());// adding genreId added in gim
+                    insertGIMStatement.setString(2, gim.getMovieId());
+                    insertGIMStatement.execute();
+                    insertGIMStatement.close();
+                } catch (Exception e) {
+                    System.out.println(e);
                 }
             }
 
-
-            for (GenresInMovies gim : gims) {
-                String insertGIMQuery = "INSERT INTO genres_in_movies(genreId, movieId) VALUES(?, ?)";
-                PreparedStatement insertGIMStatement = conn.prepareStatement(insertGIMQuery);
-
-                insertGIMStatement.setInt(1, gim.getGenreId());// adding genreId added in gim
-                insertGIMStatement.setString(2, gim.getMovieId());
-                insertGIMStatement.execute();
-                insertGIMStatement.close();
-            }
-
             for (StarsInMovies sim : sims) {
-                String insertSIMQuery = "INSERT INTO stars_in_movies(starId, movieId) VALUES(?, ?)";
-                PreparedStatement insertSIMStatement = conn.prepareStatement(insertSIMQuery);
+                try {
+                    String insertSIMQuery = "INSERT INTO stars_in_movies(starId, movieId) VALUES(?, ?)";
+                    PreparedStatement insertSIMStatement = conn.prepareStatement(insertSIMQuery);
 
-                String findStarIdQuery = "SELECT id FROM stars WHERE stars.name = ? ";
-                PreparedStatement findStarIdStatement = conn.prepareStatement(findStarIdQuery);
-                findStarIdStatement.setString(1, sim.getStageName());
-                ResultSet resId = findStarIdStatement.executeQuery();
-                resId.next();
-                String starId = resId.getString("id");
+                    String findStarIdQuery = "SELECT id FROM stars WHERE stars.name = ? ";
+                    PreparedStatement findStarIdStatement = conn.prepareStatement(findStarIdQuery);
+                    findStarIdStatement.setString(1, sim.getStageName());
 
-                insertSIMStatement.setString(1, starId);
-                insertSIMStatement.setString(2, sim.getMovieId());
-                resId.close();
-                findStarIdStatement.close();
+                    ResultSet resId = findStarIdStatement.executeQuery();
+                    simCount++;
+                    if(simCount % 1000 == 0) System.out.println("sim inserted: " + simCount);
 
-                insertSIMStatement.execute();
-                insertSIMStatement.close();
+
+                    if(resId.next()){
+                        String starId = resId.getString("id");
+
+                        insertSIMStatement.setString(1, starId);
+                        insertSIMStatement.setString(2, sim.getMovieId());
+                    }
+//                    else {
+//                        System.out.println("not find:" + sim.getStageName() + "in SIM");
+//                    }
+
+                    resId.close();
+                    findStarIdStatement.close();
+
+                    insertSIMStatement.execute();
+                    insertSIMStatement.close();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
             }
 
-
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
     }
 
     public static void main(String[] args) {

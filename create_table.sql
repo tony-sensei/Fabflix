@@ -6,6 +6,7 @@ CREATE TABLE movies(
     title 		VARCHAR(100)	NOT NULL,
     year		INT				NOT NULL,
     director	VARCHAR(100)	NOT NULL,
+    FULLTEXT idx (title),
     PRIMARY KEY (id)
 );
 
@@ -13,12 +14,14 @@ CREATE TABLE stars(
 	id 			VARCHAR(10)		NOT NULL,
     name 		VARCHAR(100)	NOT NULL,
     birthYear	INT				DEFAULT NULL,
+    FULLTEXT idx (name),
     PRIMARY KEY (id)
 );
 
 CREATE TABLE genres(
 	id 			INT				NOT NULL AUTO_INCREMENT,
     name 		VARCHAR(32)		NOT NULL,
+    FULLTEXT idx (name),
     PRIMARY KEY (id)
 );
 
@@ -74,5 +77,3 @@ CREATE TABLE creditcards(
     expiration	DATE			NOT NULL,
     PRIMARY KEY (id)
 );
-
-ALTER TABLE movies ADD FULLTEXT(title);

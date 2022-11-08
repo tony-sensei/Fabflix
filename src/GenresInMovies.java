@@ -18,6 +18,6 @@ public class GenresInMovies {
 
     public String toString() {
         return "MovieId:" + getMovieId() + ", " +
-                "GenreName:" + getGenreId();
+                "Genreid:" + getGenreId();
     }
 }
