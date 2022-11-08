@@ -54,7 +54,7 @@ public class DomParser {
 //    }
     public void runExample() throws Exception {
         String myUrl = "jdbc:mysql://localhost:3306/movieDB";
-        String loginUser = "mytestuser";
+        String loginUser = "root";
         String loginPasswd = "CS122Bupup!";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
         conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
