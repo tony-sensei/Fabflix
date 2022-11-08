@@ -75,4 +75,29 @@ CREATE TABLE creditcards(
     PRIMARY KEY (id)
 );
 
-ALTER TABLE movies ADD FULLTEXT(title);
+CREATE TABLE employees(
+    email    varchar(50) not null,
+    password varchar(20) not null,
+    fullname varchar(100),
+    PRIMARY KEY (email)
+);
+
+DELIMITER $$
+-- new version
+create procedure add_star (in s_name varchar(100), in s_birthYear int)
+begin
+	declare prev_id varchar(100);
+    declare s_id varchar(100);
+    select max(id) from stars into prev_id;
+    -- lpad to keep leading zeros
+    select concat('nm', lpad(substring(prev_id, 3, 7) + '1', 7, '0')) into s_id;
+    -- -1 for not provided birth year --
+	if (s_birthYear <=>  -1) then
+		insert stars (id, name)
+			values (s_id, s_name);
+	else
+		insert stars (id, name, birthYear)
+			values (s_id, s_name, s_birthYear);
+	end if;
+end
+$$

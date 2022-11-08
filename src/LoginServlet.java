@@ -12,7 +12,11 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-
+/*
+    org.jasypt StrongPasswordEncryptor was imported for password encryption (11/07/2022)
+    see maven for dependency details
+ */
+import org.jasypt.util.password.StrongPasswordEncryptor;
 
 @WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
@@ -60,11 +64,17 @@ public class LoginServlet extends HttpServlet {
                 statement.close();
                 return;
             }
-            // check if password correct
-            String userPassWord = res.getString("password");
             // get userId for future use
             String userId = res.getString("id");
-            if (!password.equals(userPassWord)) {
+            /*
+                check if password correct (add password encryption in 11/07/2022)
+             */
+            // String userPassWord = res.getString("password");
+            String encryptedPassword = res.getString("password");
+            boolean success = false;
+            // use the same encryptor to compare the user input password with encrypted password stored in DB
+            success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
+            if (!success) {
                 // wrong password
                 responseJsonObject.addProperty("status", "fail");
                 // Log to localhost log
@@ -75,8 +85,9 @@ public class LoginServlet extends HttpServlet {
                 statement.close();
                 return;
             }
-            // login success
-            // set this user into the session
+            /*
+                login success, set this user into the session
+             */
             request.getSession().setAttribute("user", new User(username, userId));
             responseJsonObject.addProperty("status", "success");
             responseJsonObject.addProperty("message", "success");
