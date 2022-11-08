@@ -74,3 +74,5 @@ CREATE TABLE creditcards(
     expiration	DATE			NOT NULL,
     PRIMARY KEY (id)
 );
+
+ALTER TABLE movies ADD FULLTEXT(title);
