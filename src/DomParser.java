@@ -85,7 +85,7 @@ public class DomParser {
 //        } catch (Exception e) {
 //            System.out.println(e);
 //        }
-        System.out.println("finish");
+        System.out.println("finished");
     }
 
     private void parseXmlFile() {
