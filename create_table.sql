@@ -6,6 +6,7 @@ CREATE TABLE movies(
     title 		VARCHAR(100)	NOT NULL,
     year		INT				NOT NULL,
     director	VARCHAR(100)	NOT NULL,
+    FULLTEXT idx (title),
     PRIMARY KEY (id)
 );
 
@@ -13,12 +14,14 @@ CREATE TABLE stars(
 	id 			VARCHAR(10)		NOT NULL,
     name 		VARCHAR(100)	NOT NULL,
     birthYear	INT				DEFAULT NULL,
+    FULLTEXT idx (name),
     PRIMARY KEY (id)
 );
 
 CREATE TABLE genres(
 	id 			INT				NOT NULL AUTO_INCREMENT,
     name 		VARCHAR(32)		NOT NULL,
+    FULLTEXT idx (name),
     PRIMARY KEY (id)
 );
 
@@ -74,30 +77,3 @@ CREATE TABLE creditcards(
     expiration	DATE			NOT NULL,
     PRIMARY KEY (id)
 );
-
-CREATE TABLE employees(
-    email    varchar(50) not null,
-    password varchar(20) not null,
-    fullname varchar(100),
-    PRIMARY KEY (email)
-);
-
-DELIMITER $$
--- new version
-create procedure add_star (in s_name varchar(100), in s_birthYear int)
-begin
-	declare prev_id varchar(100);
-    declare s_id varchar(100);
-    select max(id) from stars into prev_id;
-    -- lpad to keep leading zeros
-    select concat('nm', lpad(substring(prev_id, 3, 7) + '1', 7, '0')) into s_id;
-    -- -1 for not provided birth year --
-	if (s_birthYear <=>  -1) then
-		insert stars (id, name)
-			values (s_id, s_name);
-	else
-		insert stars (id, name, birthYear)
-			values (s_id, s_name, s_birthYear);
-	end if;
-end
-$$
