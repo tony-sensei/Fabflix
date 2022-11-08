@@ -31,3 +31,19 @@ Lai Jiang: MovieList, Single movie, Single star, Main page for browsing and sear
 Zimu Qian: Implement login, shopping cart, and check out functions; beautify pages.
 
 Substring matching design: we use LIKE to do the substring design in searching, which is "%" in the front or end of the substring in sql querys.
+
+
+Project 3:
+
+Demo Video URL:
+
+
+Members' Contribution:
+Lai Jiang: PreparedStatement, HTTPS, XML parsing, query optimization.
+Zimu Qian: Employee Dashboard, Recaptcha, PasswordEncrypyion.
+
+The queries with Prepared Statements: MovieListServlet.java, SingleStarServlet.java, SingleMovieServlet.java, CreditCardServlet.java, LoginServlet.java
+
+Parsing time optimization Strategy:
+1. Using fulltext index.
+2. Reduced calls on MySQL.
