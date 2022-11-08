@@ -1,3 +1,5 @@
+package main.java;
+
 public class StarsInMovies {
     private final String movieId;
     private final String stageName;

@@ -3,6 +3,6 @@
 target/
 .DS_Store
 movie-data.sql
-actors63.xml
-casts124.xml
-mains243.xml
+xmlParser/actors63.xml
+xmlParser/casts124.xml
+xmlParser/mains243.xml

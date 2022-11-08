@@ -1,3 +1,5 @@
+package main.java;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -5,7 +7,6 @@ import org.xml.sax.SAXException;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.ServletConfig;
 import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -308,7 +309,7 @@ public class DomParser {
         }
         return textVal;
     }
-    
+
 
     private int getIntValue(Element ele, String tagName) {
         // in production application you would catch the exception

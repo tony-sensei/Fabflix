@@ -1,3 +1,5 @@
+package main.java;
+
 public class Actor {
     private final String stageName;
     private final int dob;

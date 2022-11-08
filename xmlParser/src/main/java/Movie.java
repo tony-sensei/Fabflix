@@ -1,3 +1,5 @@
+package main.java;
+
 public class Movie {
     private final String title;
     private final String id;
