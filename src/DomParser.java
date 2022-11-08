@@ -60,12 +60,9 @@ public class DomParser {
         conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
         // parse the xml file and get the dom object
         parseXmlFile();
-
         parseDocument();
-
         // iterate through the list and print the data
         printData();
-
         handleInsertion();
 //        try {
 //            String myUrl = "jdbc:mysql://localhost:3306/movieDB";
@@ -88,6 +85,9 @@ public class DomParser {
         System.out.println("finished");
     }
 
+    /**
+     * parseXmlFile (called by run function)
+     */
     private void parseXmlFile() {
         // get the factory
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -118,8 +118,7 @@ public class DomParser {
 
         int movieCount = 0;
 
-
-        //main.xml
+        // main.xml
         if (nodeDFMainList != null) {
             for (int i = 0; i < nodeDFMainList.getLength(); i++) {
 
@@ -154,7 +153,9 @@ public class DomParser {
                                 insertMovieStatement.setString(4, movie.getDirector());
                                 insertMovieStatement.registerOutParameter(1, Types.VARCHAR);
                                 insertMovieStatement.execute();
+                                // returned movieId by calling stored procedures
                                 movieId = insertMovieStatement.getString(1);
+                                insertMovieStatement.close();
                             } catch (Exception e) {
                                 System.out.println(e);
                             }
@@ -198,24 +199,25 @@ public class DomParser {
 
         //actor.xml
         if (nodeActorList != null) {
-            try {
                 for (int i = 0; i < nodeActorList.getLength(); i++) {
 //                for (int i = 0; i < 3; i++) {
                     Element actorElement = (Element) nodeActorList.item(i);
                     Actor actor = parseActor(actorElement);
-
-                    if(actor.getStageName() != null) {
-                        CallableStatement insertActorStatement = conn.prepareCall(" {CALL add_star(?, ?, ?)}");
-                        insertActorStatement.setString(1, actor.getStageName());
-                        insertActorStatement.setInt(2, actor.getDob());
-                        insertActorStatement.registerOutParameter(3, Types.VARCHAR);
-                        insertActorStatement.execute();
+                    try {
+                        if (actor.getStageName() != null) {
+                            CallableStatement insertActorStatement = conn.prepareCall(" {CALL add_star(?, ?, ?)}");
+                            insertActorStatement.setString(1, actor.getStageName());
+                            insertActorStatement.setInt(2, actor.getDob());
+                            insertActorStatement.registerOutParameter(3, Types.VARCHAR);
+                            insertActorStatement.execute();
+                            // String last_inserted_starId = insertActorStatement.getString(3);
+                            // System.out.println("finished inserting star id = " + last_inserted_starId);
+                            insertActorStatement.close();
+                        }
+                    }catch (Exception e) {
+                        System.out.println(e);
                     }
                 }
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
         }
     }
 
@@ -306,8 +308,7 @@ public class DomParser {
         }
         return textVal;
     }
-
-
+    
 
     private int getIntValue(Element ele, String tagName) {
         // in production application you would catch the exception
