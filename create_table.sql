@@ -77,3 +77,12 @@ CREATE TABLE creditcards(
     expiration	DATE			NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE employees(
+    email    varchar(50) not null,
+    password varchar(20) not null,
+    fullname varchar(100),
+    PRIMARY KEY (email)
+);
+
+INSERT INTO employees VALUES('classta@email.edu', 'classta', 'TA CS122B');
