@@ -16,7 +16,6 @@ public class StarsInMovies {
         return stageName;
     }
 
-
     public String toString() {
         return "MovieId:" + getMovieId() + ", " +
                 "StageName:" + getStageName();

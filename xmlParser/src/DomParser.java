@@ -57,16 +57,23 @@ public class DomParser {
         String loginPasswd = "CS122Bupup!";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
         System.out.println("start conn");
-        conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
-        System.out.println("finish conn");
-        // parse the xml file and get the dom object
-        parseXmlFile();
-        System.out.println("finish parsexmlfile");
-        parseDocument();
-        System.out.println("finish parseDocument");
-        // iterate through the list and print the data
-        printData();
-        handleInsertion();
+        try {
+            conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
+            System.out.println("finish conn");
+            // parse the xml file and get the dom object
+            parseXmlFile();
+            System.out.println("finish parsexmlfile");
+            parseDocument();
+            System.out.println("finish parseDocument");
+            // iterate through the list and print the data
+            printData();
+            handleInsertion();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            conn.close();
+        }
+
 //        try {
 //            String myUrl = "jdbc:mysql://localhost:3306/movieDB";
 //            String loginUser = "mytestuser";
