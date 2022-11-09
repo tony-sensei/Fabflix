@@ -71,7 +71,7 @@ public class DomParser {
         } catch (Exception e) {
             System.out.println(e);
         } finally {
-            conn.close();
+            if (conn != null) conn.close();
         }
 
 //        try {
