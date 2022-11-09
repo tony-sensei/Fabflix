@@ -1,3 +1,4 @@
+package main.java;
 
 public class GenresInMovies {
     private final String movieId;
