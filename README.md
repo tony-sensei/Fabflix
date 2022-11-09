@@ -36,7 +36,7 @@ Substring matching design: we use LIKE to do the substring design in searching, 
 Project 3:
 
 Demo Video URL:
-
+https://youtu.be/ErwIKxqU7yY
 
 Members' Contribution:
 Lai Jiang: PreparedStatement, HTTPS, XML parsing, query optimization.
