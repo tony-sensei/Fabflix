@@ -1,3 +1,4 @@
+package main.java;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,7 +55,7 @@ public class DomParser {
 //    }
     public void runExample() throws Exception {
         String myUrl = "jdbc:mysql://localhost:3306/movieDB";
-        String loginUser = "root";
+        String loginUser = "mytestuser";
         String loginPasswd = "CS122Bupup!";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
         conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
@@ -97,9 +98,9 @@ public class DomParser {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
             // parse using builder to get DOM representation of the XML file
-            domActor = documentBuilder.parse("actors63.xml");
-            domCast = documentBuilder.parse("casts124.xml");
-            domMain = documentBuilder.parse("mains243.xml");
+            domActor = documentBuilder.parse("xmlParser/actors63.xml");
+            domCast = documentBuilder.parse("xmlParser/casts124.xml");
+            domMain = documentBuilder.parse("xmlParser/mains243.xml");
 
         } catch (ParserConfigurationException | SAXException | IOException error) {
             error.printStackTrace();
