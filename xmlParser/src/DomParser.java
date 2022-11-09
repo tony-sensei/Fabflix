@@ -21,8 +21,8 @@ public class DomParser {
 //    List<Movie> movies = new ArrayList<>();
 //    Set<String> genres = new HashSet<>();
 //    List<Actor> actors = new ArrayList<>();
-    private List<GenresInMovies> gims = new ArrayList<>();
-    private List<StarsInMovies> sims = new ArrayList<>();
+    private Set<GenresInMovies> gims = new HashSet<>();
+    private Set<StarsInMovies> sims = new HashSet<>();
     private int gimCount = 0;
     private int simCount = 0;
 
