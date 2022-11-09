@@ -56,10 +56,14 @@ public class DomParser {
         String loginUser = "mytestuser";
         String loginPasswd = "CS122Bupup!";
         Class.forName("com.mysql.jdbc.Driver").newInstance();
+        System.out.println("start conn");
         conn = DriverManager.getConnection(myUrl, loginUser, loginPasswd);
+        System.out.println("finish conn");
         // parse the xml file and get the dom object
         parseXmlFile();
+        System.out.println("finish parsexmlfile");
         parseDocument();
+        System.out.println("finish parseDocument");
         // iterate through the list and print the data
         printData();
         handleInsertion();
