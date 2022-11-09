@@ -1,4 +1,3 @@
-package main.java;
 
 public class StarsInMovies {
     private final String movieId;
