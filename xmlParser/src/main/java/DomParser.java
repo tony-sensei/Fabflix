@@ -394,7 +394,7 @@ public class DomParser {
                         insertSIMStatement.setString(2, sim.getMovieId());
                     }
 //                    else {
-//                        System.out.println("not find:" + sim.getStageName() + "in SIM");
+//                        System.out.println("not find:" + sim.getStageName() + " in SIM");
 //                    }
 
                     resId.close();
