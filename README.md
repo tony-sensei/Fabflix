@@ -46,4 +46,4 @@ The queries with Prepared Statements: MovieListServlet.java, SingleStarServlet.j
 
 Parsing time optimization Strategy:
 1. Using fulltext index.
-2. Reduced calls on MySQL.
+2. Using hashset to avoid duplicates when parsing.
