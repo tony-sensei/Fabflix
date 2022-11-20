@@ -72,40 +72,49 @@ public class MovieListServlet extends HttpServlet {
 
             //checking which parameter is typed
             ArrayList<Integer> checkList = new ArrayList<Integer>(
-                    Arrays.asList(0, 0, 0, 0)
+                    Arrays.asList(0, 0, 0, 0, 0, 0)
             );
             ArrayList<String> paramList = new ArrayList<String>(
-                    Arrays.asList("null","null","null","null")
+                    Arrays.asList("null","null","null", "null", "null", "null")
             );
 
             if (genre == null && letter == null) {
                 if (!title.equals("null")) {
-                    mainQuery += "AND title LIKE ? ";
+                    mainQuery += "AND (MATCH(title) AGAINST (? IN BOOLEAN MODE) ";
+                    mainQuery += "OR title LIKE ? ";
+                    mainQuery += "OR soundex(title) = soundex(?) ) ";
                     checkList.set(0, 1);
-                    String curParam = "%" + title + "%";
-                    paramList.set(0, curParam);
+                    checkList.set(1, 1);
+                    checkList.set(2, 1);
+                    String queryParam = "";
+                    String[] splitAuto = title.split("\\s+");
+                    for(String s: splitAuto) queryParam += "+" + s + "* ";
+                    queryParam = queryParam.substring(0, queryParam.length()-1);
+                    paramList.set(0, queryParam);
+                    paramList.set(1, "%" + title + "%");
+                    paramList.set(2, title);
                 }
-//                    mainQuery += "AND title LIKE '%" + title + "%' ";
+//
                 if (!year.equals("null")){
                     mainQuery += "AND year = ? ";
-                    checkList.set(1, 1);
+                    checkList.set(3, 1);
                     String curParam = year;
-                    paramList.set(1, curParam);
+                    paramList.set(3, curParam);
                 }
 //                    mainQuery += "AND year = " + year + " ";
 
                 if (!director.equals("null")){
                     mainQuery += "AND director LIKE ? ";
-                    checkList.set(2, 1);
+                    checkList.set(4, 1);
                     String curParam = "%" + director + "%";
-                    paramList.set(2, curParam);
+                    paramList.set(4, curParam);
                 }
 //                    mainQuery += "AND director LIKE '%" + director + "%' ";
                 if (!star.equals("null")){
                     mainQuery += "AND S.name LIKE ? ";
-                    checkList.set(3, 1);
+                    checkList.set(5, 1);
                     String curParam = "%" + star + "%";
-                    paramList.set(3, curParam);
+                    paramList.set(5, curParam);
                 }
 //                    mainQuery += "AND S.name LIKE '%" + star + "%' ";
 
@@ -147,8 +156,8 @@ public class MovieListServlet extends HttpServlet {
                 }
             } else {
                 queryTempTable = "WITH tempTable AS (" +
-                                "SELECT movieId, rating " +
-                                "FROM ratings ";
+                        "SELECT movieId, rating " +
+                        "FROM ratings ";
                 if(ratingSort.equals("asc")){
                     queryTempTable += "order by rating asc ";
                     if(titleSort.equals("asc"))
@@ -165,31 +174,16 @@ public class MovieListServlet extends HttpServlet {
                 }
             }
 
-
-            //count the total number of movies
-            Statement statement = conn.createStatement();
-            String countQuery = "SELECT COUNT(*) as totalMovie FROM movies";
-            ResultSet r = statement.executeQuery(countQuery);
-            r.next();
-            String totalMovie = r.getString("totalMovie");
-            r.close();
-            statement.close();
-
-
-            //pagination
-//            mainQuery += " limit " + maxsize + " offset " + offset + "; ";
-            mainQuery += " limit ? offset ?; ";
             queryTempTable += ") ";
             mainQuery = queryTempTable + mainQuery;
-            System.out.println(mainQuery);
 
             PreparedStatement statementMovie = conn.prepareStatement(mainQuery);
 
             int numOfParam = 1;
             if (genre == null && letter == null){
-                for(int i = 0; i < 4; i++) {
+                for(int i = 0; i < 6; i++) {
                     if(checkList.get(i) == 1) {
-                        if(i == 1) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
+                        if(i == 3) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
                         else statementMovie.setString(numOfParam, paramList.get(i));
                         numOfParam++;
                     }
@@ -211,6 +205,51 @@ public class MovieListServlet extends HttpServlet {
                     }
                 }
             }
+
+
+            //count the total number of movies
+            ResultSet r = statementMovie.executeQuery();
+            int count = 0;
+            while (r.next()) {
+                count++;
+            }
+            r.close();
+
+
+            //pagination
+//            mainQuery += " limit " + maxsize + " offset " + offset + "; ";
+            mainQuery += " limit ? offset ?; ";
+            System.out.println(mainQuery);
+
+            statementMovie = conn.prepareStatement(mainQuery);
+
+            numOfParam = 1;
+            if (genre == null && letter == null){
+                for(int i = 0; i < 6; i++) {
+                    if(checkList.get(i) == 1) {
+                        if(i == 3) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
+                        else statementMovie.setString(numOfParam, paramList.get(i));
+                        numOfParam++;
+                    }
+                }
+            }
+            else{
+                if (letter == null) {
+//                    mainQuery += "AND G.name = '" + genre + "' ";
+                    statementMovie.setString(numOfParam, genre);
+                    numOfParam++;
+                } else {
+                    if (letter.equals("*")) {
+                        mainQuery += "AND title REGEXP '^[^a-z0-9A-z]' ";
+                    } else {
+//                        mainQuery += "AND title LIKE '" + letter + "%' ";
+                        String letterParam = letter + "%";
+                        statementMovie.setString(numOfParam, letterParam);
+                        numOfParam++;
+                    }
+                }
+            }
+
             statementMovie.setInt(numOfParam, parseInt(maxsize));
             numOfParam++;
             statementMovie.setInt(numOfParam, offset);
@@ -285,7 +324,7 @@ public class MovieListServlet extends HttpServlet {
                 jsonArray.add(jsonObject);
             }
             JsonObject obj = new JsonObject();
-            obj.addProperty("total", totalMovie);
+            obj.addProperty("total", count);
             jsonArray.add(obj);
             out.write(jsonArray.toString());
 

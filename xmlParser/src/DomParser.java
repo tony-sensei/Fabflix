@@ -160,8 +160,8 @@ public class DomParser {
                         if(movieCount % 1000 == 0) System.out.println("movie inserted: " + movieCount);
                         if(movie.getDirector() != null && movie.getYear() != -1 && movie.getDirector() != null) {
                             String movieId = movie.getId();
-                            try {
-                                CallableStatement insertMovieStatement = conn.prepareCall(" {CALL add_movie4(?, ?, ?, ?)}");
+                            try (CallableStatement insertMovieStatement = conn.prepareCall(" {CALL add_movie4(?, ?, ?, ?)}")) {
+                                // CallableStatement insertMovieStatement = conn.prepareCall(" {CALL add_movie4(?, ?, ?, ?)}");
                                 insertMovieStatement.setString(1, movie.getId());
                                 insertMovieStatement.setString(2, movie.getTitle());
                                 insertMovieStatement.setInt(3, movie.getYear());
@@ -170,7 +170,6 @@ public class DomParser {
                                 insertMovieStatement.execute();
                                 // returned movieId by calling stored procedures
                                 movieId = insertMovieStatement.getString(1);
-                                insertMovieStatement.close();
                             } catch (Exception e) {
                                 System.out.println(e);
                             }

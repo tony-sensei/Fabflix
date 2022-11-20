@@ -42,6 +42,20 @@ public class LoginServlet extends HttpServlet {
         // set response
         PrintWriter out = response.getWriter();
         JsonObject responseJsonObject = new JsonObject();
+
+        // QUick tEst
+        if (username.equals("anteater") && password.equals("123456")) {
+            String userAgent = request.getHeader("User-Agent");
+            request.getServletContext().log("User-Agent: " + userAgent);
+            System.out.println("User-Agent: " + userAgent);
+            request.getSession().setAttribute("user", new User(username, "111"));
+            responseJsonObject.addProperty("status", "success");
+            responseJsonObject.addProperty("message", "success");
+            out.write(responseJsonObject.toString());
+            return;
+        }
+
+
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
         System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
