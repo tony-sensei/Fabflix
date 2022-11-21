@@ -72,20 +72,26 @@ public class MovieListServlet extends HttpServlet {
 
             //checking which parameter is typed
             ArrayList<Integer> checkList = new ArrayList<Integer>(
-                    Arrays.asList(0, 0, 0, 0, 0, 0)
+//                    Arrays.asList(0, 0, 0, 0, 0, 0)
+                    //Todo: probably add 1 more 0 after extension
+                    Arrays.asList(0, 0, 0, 0, 0, 0, 0)
             );
             ArrayList<String> paramList = new ArrayList<String>(
-                    Arrays.asList("null","null","null", "null", "null", "null")
+//                    Arrays.asList("null","null","null", "null", "null", "null")
+                    //Todo: probably add 1 more null after extension
+                    Arrays.asList("null","null","null", "null", "null", "null", "null")
             );
 
             if (genre == null && letter == null) {
                 if (!title.equals("null")) {
                     mainQuery += "AND (MATCH(title) AGAINST (? IN BOOLEAN MODE) ";
                     mainQuery += "OR title LIKE ? ";
-                    mainQuery += "OR soundex(title) = soundex(?) ) ";
+//                    mainQuery += "OR soundex(title) = soundex(?) ) ";
+                    mainQuery += "OR edth(title, ?, ?)) ";
                     checkList.set(0, 1);
                     checkList.set(1, 1);
                     checkList.set(2, 1);
+                    checkList.set(3, 1);
                     String queryParam = "";
                     String[] splitAuto = title.split("\\s+");
                     for(String s: splitAuto) queryParam += "+" + s + "* ";
@@ -93,28 +99,32 @@ public class MovieListServlet extends HttpServlet {
                     paramList.set(0, queryParam);
                     paramList.set(1, "%" + title + "%");
                     paramList.set(2, title);
+                    //            uncomment when library extended
+                    int adjustNum;
+                    adjustNum = (int) title.length() / 3 + 1;
+                    paramList.set(3, adjustNum + "");
                 }
 //
                 if (!year.equals("null")){
                     mainQuery += "AND year = ? ";
-                    checkList.set(3, 1);
+                    checkList.set(4, 1);
                     String curParam = year;
-                    paramList.set(3, curParam);
+                    paramList.set(4, curParam);
                 }
 //                    mainQuery += "AND year = " + year + " ";
 
                 if (!director.equals("null")){
                     mainQuery += "AND director LIKE ? ";
-                    checkList.set(4, 1);
+                    checkList.set(5, 1);
                     String curParam = "%" + director + "%";
-                    paramList.set(4, curParam);
+                    paramList.set(5, curParam);
                 }
 //                    mainQuery += "AND director LIKE '%" + director + "%' ";
                 if (!star.equals("null")){
                     mainQuery += "AND S.name LIKE ? ";
-                    checkList.set(5, 1);
+                    checkList.set(6, 1);
                     String curParam = "%" + star + "%";
-                    paramList.set(5, curParam);
+                    paramList.set(6, curParam);
                 }
 //                    mainQuery += "AND S.name LIKE '%" + star + "%' ";
 
@@ -181,9 +191,9 @@ public class MovieListServlet extends HttpServlet {
 
             int numOfParam = 1;
             if (genre == null && letter == null){
-                for(int i = 0; i < 6; i++) {
+                for(int i = 0; i < 7; i++) {
                     if(checkList.get(i) == 1) {
-                        if(i == 3) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
+                        if(i == 3 || i == 4) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
                         else statementMovie.setString(numOfParam, paramList.get(i));
                         numOfParam++;
                     }
@@ -225,9 +235,9 @@ public class MovieListServlet extends HttpServlet {
 
             numOfParam = 1;
             if (genre == null && letter == null){
-                for(int i = 0; i < 6; i++) {
+                for(int i = 0; i < 7; i++) {
                     if(checkList.get(i) == 1) {
-                        if(i == 3) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
+                        if(i == 3 || i == 4) statementMovie.setInt(numOfParam, parseInt(paramList.get(i)));
                         else statementMovie.setString(numOfParam, paramList.get(i));
                         numOfParam++;
                     }
