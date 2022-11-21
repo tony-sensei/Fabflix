@@ -35,43 +35,38 @@ public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        // get parameters
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
         // set response
         PrintWriter out = response.getWriter();
         JsonObject responseJsonObject = new JsonObject();
 
-        // QUick tEst
-        if (username.equals("anteater") && password.equals("123456")) {
-            String userAgent = request.getHeader("User-Agent");
+        // get parameters
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String userAgent = request.getHeader("User-Agent");
+
+        // check if android user
+        if (userAgent.contains("Android")) {
             request.getServletContext().log("User-Agent: " + userAgent);
             System.out.println("User-Agent: " + userAgent);
-            request.getSession().setAttribute("user", new User(username, "111"));
-            responseJsonObject.addProperty("status", "success");
-            responseJsonObject.addProperty("message", "success");
-            out.write(responseJsonObject.toString());
-            return;
+
+        } else {
+            String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+            System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
+
+            // verify recaptcha
+            try {
+                RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+            } catch (Exception e) {
+                responseJsonObject.addProperty("status", "fail");
+                responseJsonObject.addProperty("message", "recaptcha verification error");
+                // Log error to localhost log
+                request.getServletContext().log("Error:", e);
+                out.write(responseJsonObject.toString());
+                out.close();
+                return;
+            }
         }
-
-
-        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-        System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
-
-        // verify recaptcha
-        try {
-            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-        } catch (Exception e) {
-            responseJsonObject.addProperty("status", "fail");
-            responseJsonObject.addProperty("message", "recaptcha verification error");
-            // Log error to localhost log
-            request.getServletContext().log("Error:", e);
-            out.write(responseJsonObject.toString());
-            out.close();
-            return;
-        }
-        // successfully verify recaptcha //
+        // successfully verify recaptcha OR Android users //
 
         // Establish the db connection
         try (Connection conn = dataSource.getConnection()) {
