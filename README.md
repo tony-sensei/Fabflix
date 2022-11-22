@@ -52,7 +52,7 @@ Parsing time optimization Strategy:
 Project 4:
 
 Demo Video URL:
-https://youtu.be/7HEbw1gtRpw
+https://youtu.be/fqA29_MwoHg
 
 Members' Contribution:
 Lai Jiang: Autocomplete, fuzzy search
