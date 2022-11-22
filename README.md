@@ -47,3 +47,17 @@ The queries with Prepared Statements: MovieListServlet.java, SingleStarServlet.j
 Parsing time optimization Strategy:
 1. Using fulltext index.
 2. Using hashset to avoid duplicates when parsing.
+
+
+Project 4:
+
+Demo Video URL:
+https://youtu.be/7HEbw1gtRpw
+
+Members' Contribution:
+Lai Jiang: Autocomplete, fuzzy search
+Zimu Qian: Android
+
+Fuzzy Search Idea:
+1. using substring match
+2. using Levenshtein Distance Approach, which is: if lev(kitten, sitting) = 3, then we have kitten -> sitten -> sittin -> sitting
