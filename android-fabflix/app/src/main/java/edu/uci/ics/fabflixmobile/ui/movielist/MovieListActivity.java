@@ -31,12 +31,11 @@ import java.util.List;
 
 public class MovieListActivity extends AppCompatActivity {
 
-    private final String host = "35.87.114.5";
+    private final String host = "35.90.237.219";
 //    private final String host = "10.0.2.2";
-    private final String port = "8080";
-    //    private final String domain = "cs122b-fall22-project2-login-cart-example";
+    private final String port = "8443";
     private final String domain = "cs122b-fall22-project1";
-    private final String baseURL = "http://" + host + ":" + port + "/" + domain;
+    private final String baseURL = "https://" + host + ":" + port + "/" + domain;
     private final String requestPath = "/movie-list";
     private String requestURL;
     private String TITLE;
