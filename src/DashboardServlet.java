@@ -146,8 +146,8 @@ public class DashboardServlet extends HttpServlet {
                     String encryptedPassword = res.getString("password");
                     boolean success = false;
                     // use the same encryptor to compare the user input password with encrypted password stored in DB
-//                    success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
-                    success = encryptedPassword.equals(password);
+                    success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
+                    // success = encryptedPassword.equals(password);
                     if ( !success ) {
                         // wrong password
                         responseJsonObject.addProperty("status", "fail");
