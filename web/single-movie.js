@@ -108,15 +108,23 @@ function handleResult(resultData) {
     }
     starString = starString.slice(0, -2);
 
-    // MODIFIED!!!
-    movieInfoElement.append("<dt class=\"col-sm-3\">Movie Title" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_title"] + "</dd>" +
+    // if(resultData[i]["movie_rating"] != 0)  rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
+    // else rowHTML += "<th>N/A</th>";
+
+    let addingElem = "<dt class=\"col-sm-3\">Movie Title" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_title"] + "</dd>" +
         "<dt class=\"col-sm-3\">Release Year" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_year"]  + "</dd>" +
         "<dt class=\"col-sm-3\">Director" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_director"]  + "</dd>" +
         "<dt class=\"col-sm-3\">Genres" + "</dt>" + "<dd class=\"col-sm-9\">" + genreString  + "</dd>" +
-        "<dt class=\"col-sm-3\">Stars" + "</dt>" + "<dd class=\"col-sm-9\">" + starString + "</dd>" +
-        "<dt class=\"col-sm-3\">Rating" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_rating"]  + "</dd>" +
-        "<dt class=\"col-sm-3\"></dt><dd class=\"col-sm-9\"><button class=\"btn btn-outline-success my-2 my-sm-0 mr-sm-2 \" onclick=\"addToCart(\'" +
-            resultData[0]['movie_id'] + "\', \'" + resultData[0]['movie_title'] + "\')\">Add to cart</button>" );
+        "<dt class=\"col-sm-3\">Stars" + "</dt>" + "<dd class=\"col-sm-9\">" + starString + "</dd>"
+
+    if(resultData[0]["movie_rating"] > 0)  addingElem += "<dt class=\"col-sm-3\">Rating" + "</dt>" + "<dd class=\"col-sm-9\">" + resultData[0]["movie_rating"]  + "</dd>";
+    else addingElem += "<dt class=\"col-sm-3\">Rating" + "</dt>" + "<dd class=\"col-sm-9\">N/A</dd>";
+
+    addingElem += "<dt class=\"col-sm-3\"></dt><dd class=\"col-sm-9\"><button class=\"btn btn-outline-success my-2 my-sm-0 mr-sm-2 \" onclick=\"addToCart(\'" +
+        resultData[0]['movie_id'] + "\', \'" + resultData[0]['movie_title'] + "\')\">Add to cart</button>";
+
+    // MODIFIED!!!
+    movieInfoElement.append(addingElem);
 
 }
 

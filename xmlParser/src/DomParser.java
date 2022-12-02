@@ -21,8 +21,8 @@ public class DomParser {
 //    List<Movie> movies = new ArrayList<>();
 //    Set<String> genres = new HashSet<>();
 //    List<Actor> actors = new ArrayList<>();
-    private Set<GenresInMovies> gims = new HashSet<>();
-    private Set<StarsInMovies> sims = new HashSet<>();
+    private List<GenresInMovies> gims = new ArrayList<>();
+    private List<StarsInMovies> sims = new ArrayList<>();
     private int gimCount = 0;
     private int simCount = 0;
 
@@ -158,8 +158,7 @@ public class DomParser {
                         Movie movie = parseMovie(singleFilmElement, dirname);
                         movieCount++;
                         if(movieCount % 1000 == 0) System.out.println("movie inserted: " + movieCount);
-                        if(movie.getDirector() != null && movie.getYear() != -1 && movie.getDirector() != null) {
-                            String movieId = movie.getId();
+                        if(movie.getId() != null && movie.getDirector() != null && movie.getYear() != -1 && movie.getDirector() != null) {
                             try (CallableStatement insertMovieStatement = conn.prepareCall(" {CALL add_movie4(?, ?, ?, ?)}")) {
                                 // CallableStatement insertMovieStatement = conn.prepareCall(" {CALL add_movie4(?, ?, ?, ?)}");
                                 insertMovieStatement.setString(1, movie.getId());
@@ -168,24 +167,31 @@ public class DomParser {
                                 insertMovieStatement.setString(4, movie.getDirector());
                                 insertMovieStatement.registerOutParameter(1, Types.VARCHAR);
                                 insertMovieStatement.execute();
-                                // returned movieId by calling stored procedures
-                                movieId = insertMovieStatement.getString(1);
+
+                                String insertRatingQuery = "INSERT INTO ratings(movieId, rating, numVotes) VALUES(?, 0, 0)";
+                                PreparedStatement insertRatingStatement = conn.prepareStatement(insertRatingQuery);
+                                insertRatingStatement.setString(1, movie.getId());
+                                insertRatingStatement.execute();
+                                insertRatingStatement.close();
+
                             } catch (Exception e) {
                                 System.out.println(e);
                             }
 
-
                             Element catsElement = (Element) singleFilmElement.getElementsByTagName("cats").item(0);
                             NodeList nodeCatList = null;
+                            String movieId = movie.getId();
                             if (catsElement != null) nodeCatList = catsElement.getElementsByTagName("cat");
                             if (nodeCatList != null) {
                                 for (int k = 0; k < nodeCatList.getLength(); k++) {
                                     Element singleCatElement = (Element) nodeCatList.item(k);
-                                    try {
-                                        GenresInMovies gim = parseGIM(singleCatElement, movieId);
-                                        if(singleCatElement != null) gims.add(gim);
-                                    } catch (Exception gimE) {
-                                        System.out.println("Error for GIM when movieId:" + movieId);
+                                    if(singleCatElement != null) {
+                                        try {
+                                            GenresInMovies gim = parseGIM(singleCatElement, movieId);
+                                            if(gim.getGenreId() != -1) gims.add(gim);
+                                        } catch (Exception gimE) {
+                                            System.out.println("Error for GIM when movieId:" + movieId);
+                                        }
                                     }
                                 }
                             }
@@ -201,12 +207,17 @@ public class DomParser {
 //            for (int i = 0; i < 3; i++) {
                 Element dfElement = (Element) nodeDFCastList.item(i);
                 NodeList filmcList = dfElement.getElementsByTagName("filmc");
-                String movieId = null;
                 for (int j = 0; j < filmcList.getLength(); j++) {
-                    Element mElement = (Element) filmcList.item(j);
-                    if(movieId == null) movieId = getTextValue(mElement, "f");
-                    StarsInMovies sim = parseSIM(mElement, movieId);
-                    if(sim.getStageName() != null) sims.add(sim);
+                    Element filmcElement = (Element) filmcList.item(j);
+                    NodeList mList = filmcElement.getElementsByTagName("m");
+                    for (int k = 0; k < mList.getLength(); k++) {
+                        Element mElement = (Element) mList.item(k);
+                        String movieId = getTextValue(mElement, "f");
+                        StarsInMovies sim = parseSIM(mElement, movieId);
+                        if(sim.getStageName() != "" && sim.getStageName() != null
+                                && sim.getMovieId() != "" && sim.getMovieId() != null) sims.add(sim);
+                    }
+
                 }
             }
         }
@@ -399,22 +410,18 @@ public class DomParser {
                     simCount++;
                     if(simCount % 1000 == 0) System.out.println("sim inserted: " + simCount);
 
-
                     if(resId.next()){
                         String starId = resId.getString("id");
-
                         insertSIMStatement.setString(1, starId);
                         insertSIMStatement.setString(2, sim.getMovieId());
+                        insertSIMStatement.execute();
                     }
 //                    else {
 //                        System.out.println("not find:" + sim.getStageName() + " in SIM");
 //                    }
-
+                    insertSIMStatement.close();
                     resId.close();
                     findStarIdStatement.close();
-
-                    insertSIMStatement.execute();
-                    insertSIMStatement.close();
                 } catch (Exception e) {
                     System.out.println(e);
                 }

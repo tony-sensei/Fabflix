@@ -127,7 +127,8 @@ function handleMovieResult(resultData) {
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
         rowHTML += "<th>" + genreString + "</th>";
         rowHTML += "<th>" + starString + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
+        if(resultData[i]["movie_rating"] > 0)  rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
+        else rowHTML += "<th>N/A</th>";
         rowHTML += "<th><button class=\"btn btn-outline-success my-2 my-sm-0 mr-sm-2 \" onclick=\"addToCart(\'" +
             resultData[i]['movie_id'] + "\', \'" + resultData[i]['movie_title'] + "\')\">Add to cart</button>";
         rowHTML += "</tr>";
