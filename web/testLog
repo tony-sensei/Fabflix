@@ -1,0 +1,6 @@
+JDBC time: 55msJDBC time: 73ms
+JDBC time: 50ms
+search servlet total execution time (TS): 65ms; JDBC execution time (TJ): 63ms
+search servlet total execution time (TS): 302ms; JDBC execution time (TJ): 300ms
+search servlet total execution time (TS): 303ms; JDBC execution time (TJ): 301ms
+230854096;228702704

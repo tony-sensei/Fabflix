@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,6 +37,8 @@ public class MovieListServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        long servletStartTime = System.nanoTime();
+        long servletEndTime;
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
@@ -61,6 +62,8 @@ public class MovieListServlet extends HttpServlet {
         int offset = parseInt(page) * parseInt(maxsize);
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
+        long jdbcStartTime = System.nanoTime();
+        long jdbcEndTime = 0;
         try (Connection conn = dataSource.getConnection()) {
             String queryTempTable;
             String mainQuery = "SELECT title, year, director, M.id as movieId, rating " +
@@ -333,6 +336,8 @@ public class MovieListServlet extends HttpServlet {
 
                 jsonArray.add(jsonObject);
             }
+            // JDBC end here
+            jdbcEndTime = System.nanoTime();
             JsonObject obj = new JsonObject();
             obj.addProperty("total", count);
             jsonArray.add(obj);
@@ -353,6 +358,25 @@ public class MovieListServlet extends HttpServlet {
             response.setStatus(500);
         } finally {
             out.close();
+            servletEndTime = System.nanoTime();
+            long servletTime = servletEndTime - servletStartTime;
+            long jdbcTime = jdbcEndTime - jdbcStartTime;
+            System.out.print("search servlet total execution time (in nanosecond): " + Math.round(servletTime));
+            System.out.println(" JDBC execution time (in nanosecond): " + Math.round(jdbcTime));
+            String contextPath = request.getServletContext().getRealPath("/");
+            String xmlFilePath = contextPath+"\\testLog";
+            System.out.println(xmlFilePath);
+            File logFile = new File(xmlFilePath);
+            logFile.createNewFile();
+            try (FileWriter fw = new FileWriter(xmlFilePath, true);
+                 BufferedWriter bw = new BufferedWriter(fw);
+                 PrintWriter fileOut = new PrintWriter(bw);)
+            {
+                fileOut.print(Math.round(servletTime) + ";");
+                fileOut.println(Math.round(jdbcTime));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
