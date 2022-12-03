@@ -113,5 +113,5 @@ Project 5:
 | **Scaled Version Test Plan**                   | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
 |------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
 | Case 1: HTTP/1 thread                          | ![]([path to image in img/](https://drive.google.com/file/d/1Im-7uFlpP0Sw5BIVI0WA8oCPkn7uj3H2/view?usp=sharing))   | 210                         | 170.18                                  | 169.93                        | ??           |
-| Case 2: HTTP/10 threads                        | ![](path to image in img/)   | 518                         | 480.23                                  | 480.04                        | ??           |
+| Case 2: HTTP/10 threads                        | ![]([path to image in img/](https://drive.google.com/file/d/1CUYZ_ZdKqaYXyQCIvIy5QBY47ij4RHgU/view?usp=sharing))   | 518                         | 480.23                                  | 480.04                        | ??           |
 | Case 3: HTTP/10 threads/No connection pooling  | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
