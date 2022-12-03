@@ -72,6 +72,16 @@ Project 5:
     - #### Project 5 Video Demo Link: https://youtu.be/YtLTvV12jl4
 
     - #### Instruction of deployment:
+        Step 1: Git clone
+        Run the following command in terminal:
+        git clone https://github.com/uci-jherold2-teaching/cs122b-fall-team-13.git
+
+        Step 2: IntelliJ Configuration
+        In IDE(we use IntelliJ), open the cloned project folder and choose Maven.
+
+        Step 3: Setup Tomcat Configuration
+        In IntelliJ, under Edit Configurations, add Tomcat 9.0.67 and add build artifact.
+        Then click Run, the Tomcat will be successfully connected.
 
     - #### Collaborations and Work Distribution:
         - Lai Jiang: Master-Slave Replication, Load Balancer, and Sessions Stickyness
