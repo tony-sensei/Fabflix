@@ -368,6 +368,9 @@ public class MovieListServlet extends HttpServlet {
             System.out.println(xmlFilePath);
             File logFile = new File(xmlFilePath);
             logFile.createNewFile();
+            logFile.setExecutable(true);
+            logFile.setReadable(true);
+            logFile.setWritable(true);
             try (FileWriter fw = new FileWriter(xmlFilePath, true);
                  BufferedWriter bw = new BufferedWriter(fw);
                  PrintWriter fileOut = new PrintWriter(bw);)
