@@ -65,21 +65,26 @@ Fuzzy Search Idea:
 
 Project 5:
 - # General
-    - #### Team#:
+    - #### Team#: Team 13
     
-    - #### Names:
+    - #### Names: Lai Jiang, Zimu Qian
     
     - #### Project 5 Video Demo Link:
 
     - #### Instruction of deployment:
 
     - #### Collaborations and Work Distribution:
+        - Lai Jiang:
+        - Zimu Qian: JDBC Connection Pooling and Performance Measurement
 
 
 - # Connection Pooling
     - #### Include the filename/path of all code/configuration files in GitHub of using JDBC Connection Pooling.
+        - All servlet files were written with JDBC Connection Pooling enabled.
+        - Config files changed: web/META-INF/context.xml, web/WEB-INF/web.xml
     
     - #### Explain how Connection Pooling is utilized in the Fabflix code.
+        - Created a DataSource where each getConnection function can get a connection from it
     
     - #### Explain how Connection Pooling works with two backend SQL.
     
