@@ -74,7 +74,7 @@ Project 5:
     - #### Instruction of deployment:
 
     - #### Collaborations and Work Distribution:
-        - Lai Jiang:
+        - Lai Jiang: Master-Slave Replication, Load Balancer, and Sessions Stickyness
         - Zimu Qian: JDBC Connection Pooling and Performance Measurement
 
 
