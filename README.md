@@ -69,7 +69,7 @@ Project 5:
     
     - #### Names: Lai Jiang, Zimu Qian
     
-    - #### Project 5 Video Demo Link:
+    - #### Project 5 Video Demo Link: https://youtu.be/YtLTvV12jl4
 
     - #### Instruction of deployment:
 
