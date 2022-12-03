@@ -368,17 +368,12 @@ public class MovieListServlet extends HttpServlet {
             System.out.println(xmlFilePath);
             File logFile = new File(xmlFilePath);
             logFile.createNewFile();
-            logFile.setExecutable(true);
-            logFile.setReadable(true);
-            logFile.setWritable(true);
             try (FileWriter fw = new FileWriter(xmlFilePath, true);
                  BufferedWriter bw = new BufferedWriter(fw);
                  PrintWriter fileOut = new PrintWriter(bw);)
             {
-                synchronized (fileOut) {
-                    fileOut.print(Math.round(servletTime) + ";");
-                    fileOut.println(Math.round(jdbcTime));
-                }
+                fileOut.print(Math.round(servletTime) + ";");
+                fileOut.println(Math.round(jdbcTime));
             } catch (Exception e) {
                 e.printStackTrace();
             }
