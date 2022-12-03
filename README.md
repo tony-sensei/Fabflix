@@ -118,7 +118,7 @@ Project 5:
 | Case 1: HTTP/1 thread                          | ![]([path to image in img/](https://drive.google.com/file/d/1SKEfaoHmc5QUY0psM-L3fncMR5NzLvyS/view?usp=share_link))   | 288                        | 190.53                              | 190.08                    | ??           |
 | Case 2: HTTP/10 threads                        | ![]([[path to image in img/](https://drive.google.com/file/d/1RKIlbiH2wNcJJ8am8av84VO6NuSsNDZm/view?usp=sharing)])   | 1046                         | 998.19                                  | 998.06                       | ??           |
 | Case 3: HTTPS/10 threads                       | ![]([path to image in img/](https://drive.google.com/file/d/1prvmSKJQEKNl6QM7GTmltQnBVUmgBAjG/view?usp=sharing))   | 1058                         | 1018.80                                  | 1018.49                        | ??           |
-| Case 4: HTTP/10 threads/No connection pooling  | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 4: HTTP/10 threads/No connection pooling  | ![]([path to image in img/](https://drive.google.com/file/d/1ejJ_WfHEHm_ap4VgjyA7etm8Wde9FEQO/view?usp=sharing))   | 1048                         | 1028.10                                  | 1027.89                        | ??           |
 
 | **Scaled Version Test Plan**                   | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
 |------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
