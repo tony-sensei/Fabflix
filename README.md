@@ -69,12 +69,22 @@ Project 5:
     
     - #### Names: Lai Jiang, Zimu Qian
     
-    - #### Project 5 Video Demo Link:
+    - #### Project 5 Video Demo Link: https://youtu.be/YtLTvV12jl4
 
     - #### Instruction of deployment:
+        Step 1: Git clone
+        Run the following command in terminal:
+        git clone https://github.com/uci-jherold2-teaching/cs122b-fall-team-13.git
+
+        Step 2: IntelliJ Configuration
+        In IDE(we use IntelliJ), open the cloned project folder and choose Maven.
+
+        Step 3: Setup Tomcat Configuration
+        In IntelliJ, under Edit Configurations, add Tomcat 9.0.67 and add build artifact.
+        Then click Run, the Tomcat will be successfully connected.
 
     - #### Collaborations and Work Distribution:
-        - Lai Jiang:
+        - Lai Jiang: Master-Slave Replication, Load Balancer, and Sessions Stickyness
         - Zimu Qian: JDBC Connection Pooling and Performance Measurement
 
 
@@ -97,19 +107,21 @@ Project 5:
 
 - # JMeter TS/TJ Time Logs
     - #### Instructions of how to use the `log_processing.*` script to process the JMeter logs.
+        - Put log_processing.py into the same folder as the log.txt file
+        - Input "python3 log_processing.py" in the terminal and hit enter
 
 
 - # JMeter TS/TJ Time Measurement Report
 
 | **Single-instance Version Test Plan**          | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
 |------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                          | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
-| Case 2: HTTP/10 threads                        | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
-| Case 3: HTTPS/10 threads                       | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
-| Case 4: HTTP/10 threads/No connection pooling  | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 1: HTTP/1 thread                          | ![]([path to image in img/](https://drive.google.com/file/d/1SKEfaoHmc5QUY0psM-L3fncMR5NzLvyS/view?usp=share_link))   | 288                        | 190.53                              | 190.08                    | ??           |
+| Case 2: HTTP/10 threads                        | ![]([[path to image in img/](https://drive.google.com/file/d/1RKIlbiH2wNcJJ8am8av84VO6NuSsNDZm/view?usp=sharing)])   | 1046                         | 998.19                                  | 998.06                       | ??           |
+| Case 3: HTTPS/10 threads                       | ![]([path to image in img/](https://drive.google.com/file/d/1prvmSKJQEKNl6QM7GTmltQnBVUmgBAjG/view?usp=sharing))   | 1058                         | 1018.80                                  | 1018.49                        | ??           |
+| Case 4: HTTP/10 threads/No connection pooling  | ![]([path to image in img/](https://drive.google.com/file/d/1ejJ_WfHEHm_ap4VgjyA7etm8Wde9FEQO/view?usp=sharing))   | 1048                         | 1028.10                                  | 1027.89                        | ??           |
 
 | **Scaled Version Test Plan**                   | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
 |------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                          | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
-| Case 2: HTTP/10 threads                        | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
-| Case 3: HTTP/10 threads/No connection pooling  | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 1: HTTP/1 thread                          | ![]([path to image in img/](https://drive.google.com/file/d/1Im-7uFlpP0Sw5BIVI0WA8oCPkn7uj3H2/view?usp=sharing))   | 210                         | 170.18                                  | 169.93                        | ??           |
+| Case 2: HTTP/10 threads                        | ![]([path to image in img/](https://drive.google.com/file/d/1CUYZ_ZdKqaYXyQCIvIy5QBY47ij4RHgU/view?usp=sharing))   | 518                         | 480.23                                  | 480.04                        | ??           |
+| Case 3: HTTP/10 threads/No connection pooling  | ![]([path to image in img/](https://drive.google.com/file/d/1G1WjXo-HG-m09hwEGSUdZcg-uaZmdpHN/view?usp=sharing))   | 532                         | 457.89                                  | 456.83                        | ??           |
