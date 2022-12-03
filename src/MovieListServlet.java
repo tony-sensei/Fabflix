@@ -364,7 +364,7 @@ public class MovieListServlet extends HttpServlet {
             System.out.print("search servlet total execution time (in nanosecond): " + Math.round(servletTime));
             System.out.println(" JDBC execution time (in nanosecond): " + Math.round(jdbcTime));
             String contextPath = request.getServletContext().getRealPath("/");
-            String xmlFilePath = contextPath+"\\testLog";
+            String xmlFilePath = contextPath+"/log.txt";
             System.out.println(xmlFilePath);
             File logFile = new File(xmlFilePath);
             logFile.createNewFile();
