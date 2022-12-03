@@ -97,6 +97,8 @@ Project 5:
 
 - # JMeter TS/TJ Time Logs
     - #### Instructions of how to use the `log_processing.*` script to process the JMeter logs.
+        - Put log_processing.py into the same folder as log.txt file
+        - Input "python3 log_processing.py" in the terminal
 
 
 - # JMeter TS/TJ Time Measurement Report
