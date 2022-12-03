@@ -97,12 +97,18 @@ Project 5:
         - Created a DataSource where each getConnection function can get a connection from it
     
     - #### Explain how Connection Pooling works with two backend SQL.
+        
     
 
 - # Master/Slave
     - #### Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL.
+        - Original: http://35.90.237.219:8080/cs122b-fall22-project1/
+        - Load Balancer: http://35.90.237.219/cs122b-fall22-project1/
+        - Master: http://18.236.230.142:8080/cs122b-fall22-project1/
+        - Slave: http://35.89.38.109:8080/cs122b-fall22-project1/
 
     - #### How read/write requests were routed to Master/Slave SQL?
+        - Can read from both master and slave, but only write master.
     
 
 - # JMeter TS/TJ Time Logs
